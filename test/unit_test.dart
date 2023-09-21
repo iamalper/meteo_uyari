@@ -10,7 +10,7 @@ void main() {
   });
 
   test("Get alerts", () async {
-    expect(await helpers.getAlerts(90701), returnsNormally); //Antalya
+    await expectLater(helpers.getAlerts(90701), completes); //Antalya
   });
 
   test("Equality of Alert objects", () {
