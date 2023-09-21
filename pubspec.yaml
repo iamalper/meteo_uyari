@@ -1,0 +1,29 @@
+name: meteo_uyari
+description: Live weather alerts from https://www.mgm.gov.tr
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+
+dependencies:
+  autostarter: ^0.0.2
+  convert: ^3.1.1
+  flutter:
+    sdk: flutter
+  flutter_local_notifications: ^15.1.1
+  html: ^0.15.3
+  http: ^1.1.0
+  optimization_battery: ^0.0.7
+  shared_preferences: ^2.1.1
+  sqflite: ^2.3.0
+  sqflite_common_ffi: ^2.3.0+2
+  workmanager: ^0.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
