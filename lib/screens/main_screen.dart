@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meteo_uyari/classes/helpers.dart' as helpers;
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/models/city.dart';
@@ -18,12 +19,22 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   var _uiTest = kDebugMode;
+  final _title = kDebugMode ? "Meteo Uyarı (debug)" : "Meteo Uyarı";
+  Future<bool> autoStarterState() async {
+    try {
+      return await Autostarter.checkAutoStartState() ?? true;
+    } on MissingPluginException catch (_) {
+      return true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          title: Text(_title),
           actions: [
             IconButton(
               onPressed: testButtonOnPressed,
@@ -55,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             FutureBuilder(
-              future: Autostarter.checkAutoStartState(),
+              future: autoStarterState(),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
@@ -67,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
                     if (error != null) {
                       throw error;
                     } else {
-                      final isAutoStartEnabled = snapshot.data ?? true;
+                      final isAutoStartEnabled = snapshot.data!;
                       if (isAutoStartEnabled) {
                         return const Divider(
                           height: 10,
