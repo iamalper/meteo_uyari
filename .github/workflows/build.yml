@@ -149,7 +149,8 @@ jobs:
 
   google_play_publish:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name == 'main' }}
+    #if: ${{ github.ref_name == 'main' }}
+    if: false
     needs: [release]
     steps:
     - uses: actions/checkout@v2
