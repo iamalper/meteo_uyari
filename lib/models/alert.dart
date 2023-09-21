@@ -21,7 +21,7 @@ class Alert {
   @override
   int get hashCode => alertNo.hashCode;
 
-  ListTile get listTile => AlertListTile(this);
+  ListTile get listTile => alertListTile(this);
 
   @override
   String toString() =>

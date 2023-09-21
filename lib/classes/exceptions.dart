@@ -2,7 +2,7 @@
 ///
 ///See [message]
 abstract class MeteoUyariException implements Exception {
-  ///Error message that shown to end user. Doesnt't contains technical details.
+  ///Error message that shown to end user. Doesn't contains technical details.
   String get message;
 }
 

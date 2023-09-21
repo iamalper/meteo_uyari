@@ -125,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
                           return const Center(
                               child: CircularProgressIndicator());
                         default:
-                          throw Exception();
+                          throw Error();
                       }
                     })),
               ),
