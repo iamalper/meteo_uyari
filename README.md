@@ -8,9 +8,9 @@ This app uses android **workmanager** for checking alerts periodically. Specific
 - Android
 
 ## TODO (descending priority)
-- [] Tweak UI
-- [] Get alert images and show in AlertListView object
-- [] Add option for change saved city, see github repo and leave review
-- [] Add English translations
-- [] Implement Typescript firebase function and firebase cloud messaging for getting alerts as push notification
-- [] Add screenshots
+- [ ] Tweak UI
+- [ ] Get alert images and show in AlertListView object
+- [ ] Add option for change saved city, see github repo and leave review
+- [ ] Add English translations
+- [ ] Implement Typescript firebase function and firebase cloud messaging for getting alerts as push notification
+- [ ] Add screenshots
