@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meteo_uyari/classes/helpers.dart' as helpers;
-
+import '../../classes/get_cities.dart';
 import '../../models/city.dart';
 
 class SelectLocation extends StatelessWidget {
@@ -11,7 +10,7 @@ class SelectLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: helpers.getCities(),
+        future: getCities(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return SelectLocationLoaded(

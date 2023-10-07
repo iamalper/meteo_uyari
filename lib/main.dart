@@ -1,9 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:meteo_uyari/classes/database.dart' as database;
-import 'package:meteo_uyari/screens/main_screen.dart';
+import 'firebase_options.dart';
+import 'screens/main_screen.dart';
+import 'classes/helpers.dart';
 import 'screens/intro/page_controller.dart';
 
 Future<void> main() async {
-  final savedCity = await database.getCity();
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+  } on UnsupportedError catch (_) {}
+  final savedCity = await getSavedCity();
   runApp(savedCity == null ? const Intro() : MainScreen(savedCity: savedCity));
 }

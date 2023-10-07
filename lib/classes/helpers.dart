@@ -1,85 +1,32 @@
 import 'dart:developer';
-import 'package:flutter/material.dart';
-import 'package:meteo_uyari/classes/database.dart' as database;
-
-import '../models/alert.dart';
-import 'requests.dart' as requests;
-import 'parsers.dart' as parsers;
+import 'messagging.dart' as messaging;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/city.dart';
-import '../models/town.dart';
-import 'worker.dart' as worker;
 
-///Saves [city], initalises background worker and registers alerts for [city]
-Future<void> setNotifications(City city,
-    {bool debugNotifications = false}) async {
-  await saveCity(city);
-  await worker.initalizeWorkmanager(debugNotifications: debugNotifications);
-  await worker.registerAlerts(city.centerId);
-  log("Notifications set for: $city", name: "Backend");
-}
-
-Future<List<City>> getCities() async {
-  final response = await requests.requestCities();
-  final cities = parsers.parseCities(response);
-  log("Got cities: $cities", name: "Backend");
-  return cities;
+///Saves [city],and registers pusn notifications for [city]
+///
+///Returns [false] if notification permission can't granted.
+Future<bool> setNotifications(City city) async {
+  final sp = await SharedPreferences.getInstance();
+  await sp.setString("savedCityId", city.centerId);
+  await sp.setString("savedCityName", city.name);
+  final result = await messaging.setup(city);
+  if (result) {
+    log("Notifications set for: $city", name: "Backend");
+  } else {
+    log("Notification permission denied.", name: "Backend");
+  }
+  return result;
 }
 
 Future<City?> getSavedCity() async {
-  final result = database.getCity();
-  log("Got saved city: $result", name: "Backend");
-  return result;
-}
-
-///If [city] is null, deletes saved city
-Future<void> saveCity(City? city) async {
-  final result = database.saveCity(city);
-  log("Saved city: $city", name: "Backend");
-  return result;
-}
-
-///If [uiTest] is `true` returns pre-generated alerts without connecting to api
-Future<List<Alert>> getAlerts(int id, {bool uiTest = false}) async {
-  final List<Alert> alerts;
-  if (uiTest) {
-    alerts = [
-      Alert(
-          description: "Test açıklaması",
-          color: Colors.yellow,
-          beginTime: DateTime.now(),
-          endTime: DateTime.now(),
-          alertNo: "123123"),
-      Alert(
-          description:
-              "Test açıklaması 1 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
-          color: Colors.orange,
-          beginTime: DateTime.now(),
-          endTime: DateTime.now(),
-          alertNo: "123124"),
-      Alert(
-          description:
-              "Test açıklaması 2 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
-          color: Colors.red,
-          beginTime: DateTime.now(),
-          endTime: DateTime.now(),
-          alertNo: "123125"),
-    ];
+  final sp = await SharedPreferences.getInstance();
+  final cityId = sp.getString("savedCityId");
+  final cityName = sp.getString("savedCityName");
+  if (cityName == null || cityId == null) {
+    return null;
   } else {
-    final response = await requests.requestAlerts();
-    alerts = parsers.parseAlerts(response, id);
+    final savedCity = City(centerId: cityId, name: cityName);
+    return savedCity;
   }
-  log("Got alerts for $id : $alerts", name: "Backend");
-  return alerts;
-}
-
-Future<List<Town>> getTowns(City city) async {
-  final response = await requests.requestTowns(city.centerId);
-  final towns = parsers.parseTowns(response);
-  log("Got towns $towns", name: "Backend");
-  return towns;
-}
-
-Future<void> cancelWorkers() async {
-  await worker.cancelWorks();
-  log("Worker cancel", name: "Backend");
 }
