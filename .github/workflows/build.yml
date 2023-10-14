@@ -2,17 +2,17 @@ name: BuildTask
 
 on:
   workflow_dispatch:
-  #push:
-  #  paths-ignore:
-  #    - docs/**
-  #    - screenshots**
-  #    - test/**
-  #    - LICENSE
-  #    - README.md
-  #   - GitVersion.yml
-  #    - .vscode/**
-  #    - .github/**
-  #    - whatsnew/*
+  push:
+    paths-ignore:
+      - docs/**
+      - screenshots**
+      - test/**
+      - LICENSE
+      - README.md
+      - GitVersion.yml
+      - .vscode/**
+      - .github/**
+      - whatsnew/*
 
 jobs:
   build_android:
@@ -149,7 +149,8 @@ jobs:
 
   google_play_publish:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name == 'main' }}
+    #if: ${{ github.ref_name == 'main' }}
+    if: false
     needs: [release]
     steps:
     - uses: actions/checkout@v2
@@ -161,7 +162,7 @@ jobs:
     - name: Publishing
       uses: r0adkll/upload-google-play@v1
       with:
-        serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+        serviceAccountJsonPlainText: #${{ secrets.PLAY_SERVICE_ACCOUNT }}
         packageName: com.alper.weepy
         releaseFiles: bundle/release/app-release.aab
         track: beta

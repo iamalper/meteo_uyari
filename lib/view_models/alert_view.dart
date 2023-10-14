@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/alert.dart';
+import 'package:meteo_uyari/models/alert.dart';
 
-class AlertListTile extends ListTile {
-  final Alert alert;
-  AlertListTile(this.alert, {super.key})
-      : super(
-            title: Text(alert.alertNo),
-            subtitle: Text(alert.description),
-            tileColor: alert.color,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)));
-}
+ListTile alertListTile(Alert alert) => ListTile(
+    title: Text(alert.no),
+    subtitle: Text(alert.description),
+    tileColor: alert.color,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)));

@@ -5,8 +5,13 @@ class City {
   List<Town>? towns;
 
   ///Unique for all Cities.
-  final int centerId;
+  final String centerId;
   City({required this.name, this.towns, required this.centerId});
+  City.fromMap(Map<String, dynamic> map)
+      : centerId = map["centerId"],
+        name = map["name"];
+
+  Map<String, dynamic> get toMap => {"centerId": centerId, "name": name};
   @override
   String toString() => "Name: $name, towns: $towns, centerId: $centerId";
   @override

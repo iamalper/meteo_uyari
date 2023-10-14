@@ -2,7 +2,7 @@ class Town {
   final String? name;
 
   ///Unique for all Towns.
-  final int id;
+  final String id;
   const Town({required this.id, this.name});
 
   @override

@@ -38,8 +38,7 @@ class _IntroState extends State<Intro> {
               ),
               Warnings(
                 onContiune: (isDebugPressed) async {
-                  await helpers.setNotifications(_city!,
-                      debugNotifications: isDebugPressed);
+                  await helpers.setNotifications(_city!);
                   await main();
                 },
               ),
