@@ -33,6 +33,10 @@ class _MainScreenState extends State<MainScreen> {
         body: Column(
           children: [
             Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("${widget.savedCity.name} için Hava Uyarıları"),
+            ),
+            Padding(
               padding: const EdgeInsetsDirectional.all(10),
               child: FutureBuilder(
                 future: isPermissionGranted,
