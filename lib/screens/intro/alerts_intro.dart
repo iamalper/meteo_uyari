@@ -7,7 +7,7 @@ class AlertsIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const Text("Şu durumlarda uyarı alacaksınız"),
         const Text("""

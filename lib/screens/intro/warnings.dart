@@ -13,6 +13,7 @@ class _WarningsState extends State<Warnings> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const Text("Uyarı"),
         const Text(
