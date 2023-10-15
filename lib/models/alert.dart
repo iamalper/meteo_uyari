@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:meteo_uyari/view_models/alert_view.dart';
 
 enum Hadise {
-  cold,
-  hot,
-  fog,
-  agricultural,
-  ice,
-  dust,
-  snowmelt,
-  avalanche,
-  snow,
-  thunderstorm,
-  wind,
-  rain
+  cold("Soğuk"),
+  hot("Sıcak"),
+  fog("Sis"),
+  agricultural("Zirai don"),
+  ice("Buzlanma ve Don"),
+  dust("Toz Taşınımı"),
+  snowmelt("Kar Erimesi"),
+  avalanche("Çığ"),
+  snow("Kar"),
+  thunderstorm("Gökgürültülü Sağanak Yağış"),
+  wind("Rüzgar"),
+  rain("Yağmur");
+
+  const Hadise(this.baslik);
+  final String baslik;
 }
 
 enum Severity { yellow, orange, red }

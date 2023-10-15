@@ -86,6 +86,10 @@ class _MainScreenState extends State<MainScreen> {
                         }
                       })),
             ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Veriler mgm.gov.tr adresinden alınmaktadır."),
+            )
           ],
         ),
       ),
