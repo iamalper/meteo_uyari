@@ -25,7 +25,7 @@ Future<List<Alert>> getAlerts(int cityId) async {
           endTime: DateTime.now(),
           no: "123123",
           hadise: Hadise.rain,
-          towns: [cityId.toString()]),
+          towns: [cityId]),
       Alert(
           description:
               "Test açıklaması 1 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
@@ -34,7 +34,7 @@ Future<List<Alert>> getAlerts(int cityId) async {
           endTime: DateTime.now(),
           no: "123124",
           hadise: Hadise.cold,
-          towns: [cityId.toString()]),
+          towns: [cityId]),
       Alert(
           description:
               "Test açıklaması 2 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
@@ -43,7 +43,7 @@ Future<List<Alert>> getAlerts(int cityId) async {
           endTime: DateTime.now(),
           no: "123125",
           hadise: Hadise.wind,
-          towns: [cityId.toString()]),
+          towns: [cityId]),
     ];
   } else {
     final result = await db

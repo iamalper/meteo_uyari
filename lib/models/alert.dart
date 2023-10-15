@@ -25,7 +25,7 @@ class Alert {
   final Severity severity;
   final Hadise hadise;
   final String description;
-  final List<String> towns;
+  final List<int> towns;
   final DateTime beginTime;
   final DateTime endTime;
 
@@ -46,7 +46,7 @@ class Alert {
         hadise = Hadise.values
             .singleWhere((element) => element.name == map["hadise"]),
         description = map["description"],
-        towns = map["towns"],
+        towns = (map["towns"] as List).cast<int>(),
         beginTime = DateTime.fromMillisecondsSinceEpoch(map["beginTime"]),
         endTime = DateTime.fromMillisecondsSinceEpoch(map["endTime"]);
 
