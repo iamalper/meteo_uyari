@@ -21,28 +21,44 @@ class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      themeMode: ThemeMode.system,
+      darkTheme: ThemeData.dark().copyWith(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  minimumSize: const MaterialStatePropertyAll(Size(100, 50)),
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)))))),
+      theme: ThemeData.light().copyWith(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  minimumSize: const MaterialStatePropertyAll(Size(100, 50)),
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)))))),
       home: Scaffold(
         body: SafeArea(
-          child: PageView(
-            controller: _controller,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              SelectLocation(
-                onLocationSet: (city) {
-                  _city = city;
-                  _gotoPage(1);
-                },
-              ),
-              AlertsIntro(
-                onContiune: () => _gotoPage(2),
-              ),
-              Warnings(
-                onContiune: (isDebugPressed) async {
-                  await helpers.setNotifications(_city!);
-                  await main();
-                },
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PageView(
+              controller: _controller,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                SelectLocation(
+                  onLocationSet: (city) {
+                    _city = city;
+                    _gotoPage(1);
+                  },
+                ),
+                AlertsIntro(
+                  onContiune: () => _gotoPage(2),
+                ),
+                Warnings(
+                  onContiune: (isDebugPressed) async {
+                    await helpers.setNotifications(_city!);
+                    await main();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
