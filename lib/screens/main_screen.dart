@@ -5,6 +5,7 @@ import 'package:meteo_uyari/models/city.dart';
 import '../classes/firestore.dart';
 import '../classes/messagging.dart';
 import '../view_models/warning_containter.dart';
+import 'alerts_page.dart';
 
 class MainScreen extends StatefulWidget {
   final City savedCity;
@@ -32,10 +33,6 @@ class _MainScreenState extends State<MainScreen> {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("${widget.savedCity.name} için Hava Uyarıları"),
-            ),
             Padding(
               padding: const EdgeInsetsDirectional.all(10),
               child: FutureBuilder(
@@ -71,16 +68,9 @@ class _MainScreenState extends State<MainScreen> {
                             } else if (error != null) {
                               throw error;
                             } else {
-                              return ListView.separated(
-                                  itemBuilder: ((context, index) {
-                                    final alert = snapshot.data![index];
-                                    return alert.listTile;
-                                  }),
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(
-                                        height: 5,
-                                      ),
-                                  itemCount: snapshot.data!.length);
+                              return AlertsPage(
+                                  alerts: snapshot.data!,
+                                  cityName: widget.savedCity.name);
                             }
                           case ConnectionState.waiting:
                             return const Center(
