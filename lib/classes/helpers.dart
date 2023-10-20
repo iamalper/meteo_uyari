@@ -2,6 +2,12 @@ import 'dart:developer';
 import 'messagging.dart' as messaging;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/city.dart';
+import 'package:localstore/localstore.dart';
+
+final _db = Localstore.instance;
+final _savedCitiesCollection = _db.collection("savedCities");
+
+@Deprecated("Use setNotificationForNewCity() instead")
 
 ///Saves [city],and registers pusn notifications for [city]
 ///
@@ -19,6 +25,18 @@ Future<bool> setNotifications(City city) async {
   return result;
 }
 
+Future<bool> setNotificationForNewCity(City city) async {
+  await _savedCitiesCollection.doc().set(city.toMap);
+  final result = await messaging.setup(city);
+  if (result) {
+    log("Notifications set for: $city", name: "Backend");
+  } else {
+    log("Notification permission denied.", name: "Backend");
+  }
+  return result;
+}
+
+@Deprecated("Use getSavedCities() instead")
 Future<City?> getSavedCity() async {
   final sp = await SharedPreferences.getInstance();
   final cityId = sp.getString("savedCityId");
@@ -30,3 +48,10 @@ Future<City?> getSavedCity() async {
     return savedCity;
   }
 }
+
+Future<List<City>> getSavedCities() async {
+  final citiesMap = await _savedCitiesCollection.get();
+  return citiesMap?.values.map((e) => City.fromMap(e)).toList() ?? [];
+}
+
+Future<void> deleteCities() => _savedCitiesCollection.delete();
