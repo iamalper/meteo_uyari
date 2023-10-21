@@ -2,14 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/models/city.dart';
+import 'package:meteo_uyari/screens/add_city.dart';
 import '../classes/firestore.dart';
 import '../classes/messagging.dart';
 import '../view_models/warning_containter.dart';
 import 'alerts_page.dart';
 
 class MainScreen extends StatefulWidget {
-  final City savedCity;
-  const MainScreen({super.key, required this.savedCity});
+  ///It should not be empty list
+  final List<City> savedCities;
+  const MainScreen({super.key, required this.savedCities});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -21,6 +23,15 @@ class _MainScreenState extends State<MainScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          tooltip: "Şehir ekle",
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddCityPage(),
+              )),
+          child: const Icon(Icons.add),
+        ),
         appBar: AppBar(
           title: const Text(kDebugMode ? "Meteo Uyarı (debug)" : "Meteo Uyarı"),
           actions: [
@@ -58,19 +69,28 @@ class _MainScreenState extends State<MainScreen> {
               child: Padding(
                   padding: const EdgeInsetsDirectional.all(10),
                   child: FutureBuilder(
-                      future: getAlerts(int.parse(widget.savedCity.centerId)),
+                      future: getAlerts(widget.savedCities),
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.done:
                             final error = snapshot.error;
+                            final data = snapshot.data;
                             if (error is MeteoUyariException) {
                               return Center(child: Text(error.message));
                             } else if (error != null) {
                               throw error;
                             } else {
-                              return AlertsPage(
-                                  alerts: snapshot.data!,
-                                  cityName: widget.savedCity.name);
+                              final cities = widget.savedCities;
+                              return PageView.builder(
+                                itemCount: cities.length,
+                                itemBuilder: (context, index) => AlertsPage(
+                                    alerts: data!
+                                        .where((element) => element.towns
+                                            .contains(
+                                                cities[index].centerIdInt))
+                                        .toList(),
+                                    cityName: cities[index].name),
+                              );
                             }
                           case ConnectionState.waiting:
                             return const Center(

@@ -11,6 +11,7 @@ FirebaseMessaging? get _messagging {
     log("Firebase messagging initalised", name: "messagging");
     return instance;
   } on FirebaseException catch (_) {
+    //Omit error for testing UI for unsupported platforms.
     log("Firebase messagging couldn't initalised", name: "messagging");
     return null;
   }
@@ -19,12 +20,13 @@ FirebaseMessaging? get _messagging {
 ///Setup push notifications for [city] and it's towns.
 ///
 ///Returns [false] if permission denied by user.
+///
+///For unsupported platforms, skips setup, returns [true].
 Future<bool> setup(City city) async {
   final messaging = _messagging;
   if (messaging == null) return true;
   final result = await getPermission();
   if (result) {
-    await messaging.deleteToken();
     var futures = <Future<void>>[];
     futures.add(messaging.subscribeToTopic(city.centerId.toString()));
     final towns = city.towns;
@@ -40,6 +42,11 @@ Future<bool> setup(City city) async {
   }
 }
 
+///Get notification permission from user.
+///
+///For Android, it automatically given unless manually revoked by user.
+///
+///For unsupported platforms, always returns [true]
 Future<bool> getPermission() async {
   final messaging = _messagging;
   if (messaging == null) return true;
@@ -50,6 +57,8 @@ Future<bool> getPermission() async {
 ///Returns if notification permissions granted by the user.
 ///
 ///Request permission with [getPermission()] or [setup()]
+///
+///For unsupported platforms, always returns [true]
 Future<bool> get isPermissionGranted async {
   final messaging = _messagging;
   if (messaging == null) return true;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meteo_uyari/view_models/alert_view.dart';
+import '../view_models/alert_view.dart';
+import 'city.dart';
 
 enum Hadise {
   cold("Soğuk"),
@@ -27,7 +28,13 @@ class Alert {
 
   final Severity severity;
   final Hadise hadise;
+
+  ///Turkish, latin5 encoded description for [Alert]
   final String description;
+
+  ///The Town ids which affected for [Alert]
+  ///
+  ///They can be comperated with [City.centerIdInt]
   final List<int> towns;
   final DateTime beginTime;
   final DateTime endTime;

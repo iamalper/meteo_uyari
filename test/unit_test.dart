@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meteo_uyari/classes/firestore.dart';
 import 'package:meteo_uyari/classes/get_cities.dart';
 import 'package:meteo_uyari/models/alert.dart';
+import 'package:meteo_uyari/models/city.dart';
 
 void main() {
   test("Get cities", () async {
@@ -10,7 +11,8 @@ void main() {
   });
 
   test("Get alerts", () async {
-    await expectLater(getAlerts(90701), completes); //Antalya
+    await expectLater(
+        getAlerts([const City(name: "Antalya", centerId: "90701")]), completes);
   });
 
   test("Equality of Alert objects", () {

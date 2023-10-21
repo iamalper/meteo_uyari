@@ -11,6 +11,7 @@ Future<void> main() async {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
   } on UnsupportedError catch (_) {}
-  final savedCity = await getSavedCity();
-  runApp(savedCity == null ? const Intro() : MainScreen(savedCity: savedCity));
+  final savedCity = await getSavedCities();
+  runApp(
+      savedCity.isEmpty ? const Intro() : MainScreen(savedCities: savedCity));
 }
