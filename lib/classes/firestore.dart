@@ -37,7 +37,7 @@ Future<List<Alert>> getAlerts(List<City> cities) async {
           endTime: DateTime.now(),
           no: "123124",
           hadise: Hadise.cold,
-          towns: [1252, 2364]),
+          towns: cities.map((e) => e.centerIdInt).toList()),
       Alert(
           description:
               "Test açıklaması 2 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
@@ -46,7 +46,7 @@ Future<List<Alert>> getAlerts(List<City> cities) async {
           endTime: DateTime.now(),
           no: "123125",
           hadise: Hadise.wind,
-          towns: [1242, 2344]),
+          towns: cities.map((e) => e.centerIdInt).toList()),
     ];
   } else {
     final result = await db

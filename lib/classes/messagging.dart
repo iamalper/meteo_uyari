@@ -42,6 +42,23 @@ Future<bool> setup(City city) async {
   }
 }
 
+///Unsubscribe from push notifications for [city] and it's towns.
+///
+///It has no effect if wasn't subscribed to [city] or calling
+///from unsupported platforms.
+Future<void> unsubscribeFromCity(City city) async {
+  final messaging = _messagging;
+  if (messaging != null) {
+    var futures = <Future<void>>[];
+    futures.add(messaging.unsubscribeFromTopic(city.centerId));
+    final towns = city.towns;
+    if (towns != null) {
+      futures.addAll(towns.map((e) => messaging.unsubscribeFromTopic(e.id)));
+    }
+    await Future.wait(futures);
+  }
+}
+
 ///Get notification permission from user.
 ///
 ///For Android, it automatically given unless manually revoked by user.

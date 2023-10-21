@@ -25,10 +25,15 @@ Future<bool> setNotifications(City city) async {
   return result;
 }
 
+///Save the city and setup push notifications.
+///
+///If called for same [city] multiple times, it has no effect.
+///
+///Returns [false] if notification permission denied by user.
 Future<bool> setNotificationForNewCity(City city) async {
-  await _savedCitiesCollection.doc().set(city.toMap);
   final result = await messaging.setup(city);
   if (result) {
+    await _savedCitiesCollection.doc(city.centerId).set(city.toMap);
     log("Notifications set for: $city", name: "Backend");
   } else {
     log("Notification permission denied.", name: "Backend");
@@ -54,4 +59,7 @@ Future<List<City>> getSavedCities() async {
   return citiesMap?.values.map((e) => City.fromMap(e)).toList() ?? [];
 }
 
-Future<void> deleteCities() => _savedCitiesCollection.delete();
+Future<void> deleteCity(City city) => Future.wait([
+      _savedCitiesCollection.doc(city.centerId).delete(),
+      messaging.unsubscribeFromCity(city)
+    ]);
