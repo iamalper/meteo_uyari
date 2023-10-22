@@ -2,12 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
+import 'package:meteo_uyari/classes/helpers.dart';
 import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/add_city.dart';
 import '../classes/firestore.dart';
 import '../classes/messagging.dart';
 import '../view_models/warning_containter.dart';
 import 'alerts_page.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
 class MainScreen extends StatefulWidget {
   ///It should not be empty list
@@ -19,8 +21,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late final cities = widget.savedCities;
-
+  late final _cities = widget.savedCities;
+  final _pageController = PageController();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,22 +30,25 @@ class _MainScreenState extends State<MainScreen> {
       debugShowCheckedModeBanner: false,
       home: Builder(builder: (context) {
         return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            tooltip: "Şehir ekle",
-            onPressed: () async {
-              final addedCity = await Navigator.push<City>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddCityPage(),
-                  ));
-              if (addedCity != null) {
-                setState(() {
-                  cities.add(addedCity);
-                });
-              }
-            },
-            child: const Icon(Icons.add),
-          ),
+          floatingActionButtonLocation: ExpandableFab.location,
+          floatingActionButton: ExpandableFab(children: [
+            FloatingActionButton.small(
+              heroTag: null,
+              tooltip: "Şehir ekle",
+              child: const Icon(Icons.add),
+              onPressed: () => _onAddCityButtonPressed(context),
+            ),
+            FloatingActionButton.small(
+                heroTag: null,
+                tooltip: "Şehiri sil",
+                child: const Icon(Icons.delete),
+                onPressed: () {
+                  final index = _pageController.page?.toInt();
+                  if (index != null) {
+                    _onRemoveCityButtonPressed(context, _cities[index]);
+                  }
+                })
+          ]),
           appBar: AppBar(
             title:
                 const Text(kDebugMode ? "Meteo Uyarı (debug)" : "Meteo Uyarı"),
@@ -94,15 +99,16 @@ class _MainScreenState extends State<MainScreen> {
                               } else {
                                 final data = snapshot.data!;
                                 return PageView.builder(
+                                  controller: _pageController,
                                   physics: const BouncingScrollPhysics(),
-                                  itemCount: cities.length,
+                                  itemCount: _cities.length,
                                   itemBuilder: (context, index) => AlertsPage(
                                       alerts: data
                                           .where((element) => element.towns
                                               .contains(
-                                                  cities[index].centerIdInt))
+                                                  _cities[index].centerIdInt))
                                           .toList(),
-                                      cityName: cities[index].name),
+                                      cityName: _cities[index].name),
                                 );
                               }
                             case ConnectionState.waiting:
@@ -122,6 +128,43 @@ class _MainScreenState extends State<MainScreen> {
         );
       }),
     );
+  }
+
+  Future<void> _onAddCityButtonPressed(BuildContext context) async {
+    final addedCity = await Navigator.push<City>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AddCityPage(),
+        ));
+    if (addedCity != null) {
+      setState(() {
+        _cities.add(addedCity);
+      });
+    }
+  }
+
+  Future<void> _onRemoveCityButtonPressed(
+      BuildContext context, City city) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("${city.name} şehrini silmek istediğinize emin misiniz?"),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Evet")),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Hayır"))
+        ],
+      ),
+    );
+    if (result ?? false) {
+      await deleteCity(city);
+      setState(() {
+        _cities.remove(city);
+      });
+    }
   }
 }
 

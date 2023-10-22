@@ -7,7 +7,7 @@ class AlertsPage extends StatelessWidget {
   ///It's safe to pass empty list.
   final List<Alert> alerts;
 
-  ///[cityName] are shown to user.
+  ///[cityName] is shown to user.
   final String cityName;
 
   ///Page for listing alerts for a single city.
