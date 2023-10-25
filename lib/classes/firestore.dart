@@ -20,6 +20,7 @@ Future<List<Alert>> getAlerts(List<City> cities) async {
   final db = _db;
   if (db == null) {
     //For tests
+    if (cities.length < 2) return [];
     return [
       Alert(
           description: "Test açıklaması",
@@ -28,7 +29,7 @@ Future<List<Alert>> getAlerts(List<City> cities) async {
           endTime: DateTime.now(),
           no: "123123",
           hadise: Hadise.rain,
-          towns: cities.map((e) => e.centerIdInt).toList()),
+          towns: [cities[1].centerIdInt]),
       Alert(
           description:
               "Test açıklaması 1 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
@@ -37,7 +38,7 @@ Future<List<Alert>> getAlerts(List<City> cities) async {
           endTime: DateTime.now(),
           no: "123124",
           hadise: Hadise.cold,
-          towns: cities.map((e) => e.centerIdInt).toList()),
+          towns: cities.length >= 3 ? [cities[2].centerIdInt] : []),
       Alert(
           description:
               "Test açıklaması 2 uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun uzun",
@@ -46,7 +47,7 @@ Future<List<Alert>> getAlerts(List<City> cities) async {
           endTime: DateTime.now(),
           no: "123125",
           hadise: Hadise.wind,
-          towns: cities.map((e) => e.centerIdInt).toList()),
+          towns: cities.length >= 4 ? [cities[3].centerIdInt] : []),
     ];
   } else {
     final result = await db

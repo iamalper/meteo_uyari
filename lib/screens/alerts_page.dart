@@ -22,12 +22,15 @@ class AlertsPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: alerts.isEmpty
-                ? const Center(child: Text("Herhangi bir uyarı yok"))
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/screen_icons/safe-weather.png"),
+                      const Text("Herhangi bir uyarı yok"),
+                    ],
+                  )
                 : ListView.separated(
-                    itemBuilder: ((context, index) {
-                      final alert = alerts[index];
-                      return alert.listTile;
-                    }),
+                    itemBuilder: (context, index) => alerts[index].listTile,
                     separatorBuilder: (context, index) => const Divider(
                           height: 5,
                         ),
