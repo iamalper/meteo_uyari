@@ -11,7 +11,7 @@ class AlertsIntro extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const Text("Şu durumlarda uyarı alacaksınız"),
-        ...Hadise.values.map((e) => Text(e.baslik)).toList(),
+        ...Hadise.values.map((e) => Text(e.baslik)),
         const Text("Bunu daha sonra değiştirebileceksiniz"),
         ElevatedButton(onPressed: onContiune, child: const Text("Devam"))
       ],
