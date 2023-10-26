@@ -5,6 +5,7 @@ import 'warnings.dart';
 import '../../models/city.dart';
 import 'select_location.dart';
 import 'alerts_intro.dart';
+import '../../themes.dart' as my_themes;
 
 class Intro extends StatefulWidget {
   const Intro({super.key});
@@ -21,19 +22,8 @@ class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      themeMode: ThemeMode.system,
-      darkTheme: ThemeData.dark().copyWith(
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                  minimumSize: const MaterialStatePropertyAll(Size(100, 50)),
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)))))),
-      theme: ThemeData.light().copyWith(
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                  minimumSize: const MaterialStatePropertyAll(Size(100, 50)),
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)))))),
+      darkTheme: my_themes.myDarkTheme,
+      theme: my_themes.myLightTheme,
       home: Scaffold(
         body: SafeArea(
           child: Padding(

@@ -10,6 +10,7 @@ import '../classes/messagging.dart';
 import '../view_models/warning_containter.dart';
 import 'alerts_page.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import '../themes.dart' as my_themes;
 
 class MainScreen extends StatefulWidget {
   ///It should not be empty list
@@ -28,6 +29,8 @@ class _MainScreenState extends State<MainScreen> {
     return MaterialApp(
       scrollBehavior: _AppScrollBehavior(),
       debugShowCheckedModeBanner: false,
+      theme: my_themes.myLightTheme,
+      darkTheme: my_themes.myDarkTheme,
       home: Builder(builder: (context) {
         return Scaffold(
           floatingActionButtonLocation: ExpandableFab.location,
