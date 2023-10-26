@@ -31,105 +31,106 @@ class _MainScreenState extends State<MainScreen> {
       debugShowCheckedModeBanner: false,
       theme: my_themes.myLightTheme,
       darkTheme: my_themes.myDarkTheme,
-      home: Builder(builder: (context) {
-        return Scaffold(
-          floatingActionButtonLocation: ExpandableFab.location,
-          floatingActionButton: ExpandableFab(children: [
-            FloatingActionButton.small(
-              heroTag: null,
-              tooltip: "Şehir ekle",
-              child: const Icon(Icons.add),
-              onPressed: () => _onAddCityButtonPressed(context),
-            ),
-            FloatingActionButton.small(
-                heroTag: null,
-                tooltip: "Şehiri sil",
-                child: const Icon(Icons.delete),
-                onPressed: () {
-                  final index = _pageController.page?.toInt();
-                  if (index != null) {
-                    _onRemoveCityButtonPressed(context, _cities[index]);
-                  }
-                })
-          ]),
-          appBar: AppBar(
-            title:
-                const Text(kDebugMode ? "Meteo Uyarı (debug)" : "Meteo Uyarı"),
-            actions: [
-              IconButton(
-                onPressed: () => setState(() {}),
-                icon: const Icon(Icons.refresh),
-                tooltip: "Refresh",
-              )
-            ],
-          ),
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.all(10),
-                child: FutureBuilder(
-                  future: isPermissionGranted,
-                  builder: (context, snapshot) {
-                    if (snapshot.data == false) {
-                      return warningContainer(
-                          "Bildirimler devre dışı.", "Bildirimleri etkinleştir",
-                          () async {
-                        if (await getPermission()) {
-                          setState(() {});
+      home: Builder(
+          builder: (context) => Scaffold(
+                floatingActionButtonLocation: ExpandableFab.location,
+                floatingActionButton: ExpandableFab(children: [
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    tooltip: "Şehir ekle",
+                    child: const Icon(Icons.add),
+                    onPressed: () => _onAddCityButtonPressed(context),
+                  ),
+                  FloatingActionButton.small(
+                      heroTag: null,
+                      tooltip: "Şehiri sil",
+                      child: const Icon(Icons.delete),
+                      onPressed: () {
+                        final index = _pageController.page?.toInt();
+                        if (index != null && _cities.length > index) {
+                          _onRemoveCityButtonPressed(context, _cities[index]);
                         }
-                      });
-                    } else {
-                      return const SizedBox(
-                        height: 1.00,
-                      );
-                    }
-                  },
+                      })
+                ]),
+                appBar: AppBar(
+                  title: const Text(
+                      kDebugMode ? "Meteo Uyarı (debug)" : "Meteo Uyarı"),
+                  actions: [
+                    IconButton(
+                      onPressed: () => setState(() {}),
+                      icon: const Icon(Icons.refresh),
+                      tooltip: "Refresh",
+                    )
+                  ],
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                    padding: const EdgeInsetsDirectional.all(10),
-                    child: FutureBuilder(
-                        future: getAlerts(widget.savedCities),
+                body: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsetsDirectional.all(10),
+                      child: FutureBuilder(
+                        future: isPermissionGranted,
                         builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.done:
-                              final error = snapshot.error;
-                              if (error is MeteoUyariException) {
-                                return Center(child: Text(error.message));
-                              } else if (error != null) {
-                                throw error;
-                              } else {
-                                final data = snapshot.data!;
-                                return PageView.builder(
-                                  controller: _pageController,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: _cities.length,
-                                  itemBuilder: (context, index) => AlertsPage(
-                                      alerts: data
-                                          .where((element) => element.towns
-                                              .contains(
-                                                  _cities[index].centerIdInt))
-                                          .toList(),
-                                      cityName: _cities[index].name),
-                                );
+                          if (snapshot.data == false) {
+                            return warningContainer("Bildirimler devre dışı.",
+                                "Bildirimleri etkinleştir", () async {
+                              if (await getPermission()) {
+                                setState(() {});
                               }
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            default:
-                              throw Error();
+                            });
+                          } else {
+                            return const SizedBox(
+                              height: 1.00,
+                            );
                           }
-                        })),
-              ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Veriler mgm.gov.tr adresinden alınmaktadır."),
-              )
-            ],
-          ),
-        );
-      }),
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                          padding: const EdgeInsetsDirectional.all(10),
+                          child: FutureBuilder(
+                              future: getAlerts(widget.savedCities),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.done:
+                                    final error = snapshot.error;
+                                    if (error is MeteoUyariException) {
+                                      return Center(child: Text(error.message));
+                                    } else if (error != null) {
+                                      throw error;
+                                    } else {
+                                      final data = snapshot.data!;
+                                      return PageView.builder(
+                                        controller: _pageController,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount: _cities.length,
+                                        itemBuilder: (context, index) =>
+                                            AlertsPage(
+                                                alerts: data
+                                                    .where((element) => element
+                                                        .towns
+                                                        .contains(_cities[index]
+                                                            .centerIdInt))
+                                                    .toList(),
+                                                cityName: _cities[index].name),
+                                      );
+                                    }
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  default:
+                                    throw Error();
+                                }
+                              })),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child:
+                          Text("Veriler mgm.gov.tr adresinden alınmaktadır."),
+                    )
+                  ],
+                ),
+              )),
     );
   }
 
