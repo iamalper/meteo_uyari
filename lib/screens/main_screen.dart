@@ -21,9 +21,10 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late final _cities = widget.savedCities;
   final _pageController = PageController();
+  late var _tabController = TabController(length: _cities.length, vsync: this);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -62,6 +63,17 @@ class _MainScreenState extends State<MainScreen> {
                       tooltip: "Refresh",
                     )
                   ],
+                  bottom: TabBar(
+                    controller: _tabController,
+                    tabs: _cities
+                        .map((e) => Tab(
+                              text: e.name,
+                            ))
+                        .toList(),
+                    onTap: (value) => _pageController.animateToPage(value,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.linear),
+                  ),
                 ),
                 body: Column(
                   children: [
@@ -113,6 +125,8 @@ class _MainScreenState extends State<MainScreen> {
                                                             .centerIdInt))
                                                     .toList(),
                                                 cityName: _cities[index].name),
+                                        onPageChanged: (value) =>
+                                            _tabController.animateTo(value),
                                       );
                                     }
                                   case ConnectionState.waiting:
@@ -143,6 +157,8 @@ class _MainScreenState extends State<MainScreen> {
     if (addedCity != null) {
       setState(() {
         _cities.add(addedCity);
+        //TODO: find better way from reinitalising tabController
+        _tabController = TabController(length: _cities.length, vsync: this);
       });
     }
   }
@@ -167,6 +183,8 @@ class _MainScreenState extends State<MainScreen> {
       await deleteCity(city);
       setState(() {
         _cities.remove(city);
+        //TODO: find better way from reinitalising tabController
+        _tabController = TabController(length: _cities.length, vsync: this);
       });
     }
   }
