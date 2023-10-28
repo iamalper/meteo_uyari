@@ -5,10 +5,10 @@ import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/classes/helpers.dart';
 import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/add_city.dart';
+import 'package:meteo_uyari/screens/alerts_page_view.dart';
 import '../classes/firestore.dart';
 import '../classes/messagging.dart';
 import '../view_models/warning_containter.dart';
-import 'alerts_page.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import '../themes.dart' as my_themes;
 
@@ -25,6 +25,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late final _cities = widget.savedCities;
   final _pageController = PageController();
   late var _tabController = TabController(length: _cities.length, vsync: this);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -112,22 +113,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                       throw error;
                                     } else {
                                       final data = snapshot.data!;
-                                      return PageView.builder(
-                                        controller: _pageController,
-                                        physics: const BouncingScrollPhysics(),
-                                        itemCount: _cities.length,
-                                        itemBuilder: (context, index) =>
-                                            AlertsPage(
-                                                alerts: data
-                                                    .where((element) => element
-                                                        .towns
-                                                        .contains(_cities[index]
-                                                            .centerIdInt))
-                                                    .toList(),
-                                                cityName: _cities[index].name),
-                                        onPageChanged: (value) =>
-                                            _tabController.animateTo(value),
-                                      );
+                                      return AlertsPageView(
+                                          pageController: _pageController,
+                                          cities: _cities,
+                                          data: data,
+                                          tabController: _tabController);
                                     }
                                   case ConnectionState.waiting:
                                     return const Center(
@@ -158,7 +148,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       setState(() {
         _cities.add(addedCity);
         //TODO: find better way from reinitalising tabController
-        _tabController = TabController(length: _cities.length, vsync: this);
+        _tabController = TabController(
+            length: _cities.length,
+            vsync: this,
+            animationDuration: const Duration(milliseconds: 100));
       });
     }
   }
@@ -187,6 +180,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         _tabController = TabController(length: _cities.length, vsync: this);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _tabController.dispose();
+    super.dispose();
   }
 }
 

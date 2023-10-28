@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/alert.dart';
 
-class AlertsPage extends StatelessWidget {
+class AlertsPage extends StatefulWidget {
   ///[alerts] are shown to user.
   ///
   ///It's safe to pass empty list.
@@ -14,14 +14,20 @@ class AlertsPage extends StatelessWidget {
   const AlertsPage({super.key, required this.alerts, required this.cityName});
 
   @override
+  State<AlertsPage> createState() => _AlertsPageState();
+}
+
+class _AlertsPageState extends State<AlertsPage>
+    with SingleTickerProviderStateMixin {
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("$cityName için hava durumu uyarıları"),
+        Text("${widget.cityName} için hava durumu uyarıları"),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: alerts.isEmpty
+            child: widget.alerts.isEmpty
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -30,11 +36,12 @@ class AlertsPage extends StatelessWidget {
                     ],
                   )
                 : ListView.separated(
-                    itemBuilder: (context, index) => alerts[index].listTile,
+                    itemBuilder: (context, index) =>
+                        widget.alerts[index].listTile,
                     separatorBuilder: (context, index) => const Divider(
                           height: 5,
                         ),
-                    itemCount: alerts.length),
+                    itemCount: widget.alerts.length),
           ),
         ),
       ],
