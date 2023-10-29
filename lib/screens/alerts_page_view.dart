@@ -27,7 +27,7 @@ class _AlertsPageViewState extends State<AlertsPageView> {
   late final _data = widget.data;
   late final _tabController = widget.tabController;
   late var _pagePosition = _pageController.initialPage.toDouble();
-  late final _screenSizeY = MediaQuery.of(context).size.height;
+  double get _screenSizeY => MediaQuery.of(context).size.height;
   @override
   void initState() {
     _pageController.addListener(() {
