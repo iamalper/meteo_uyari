@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/themes.dart';
 import '../../classes/get_cities.dart';
 import '../../models/city.dart';
 
@@ -46,9 +47,12 @@ class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        const Text("Hava uyarılarını almak için bulunduğunuz yeri seçin"),
+        const Text(
+          "Hava uyarılarını almak için bulunduğunuz yeri seçin",
+          style: MyTextStyles.medium(),
+        ),
         DropdownMenu(
           dropdownMenuEntries: _cities
               .map((e) => DropdownMenuEntry(value: e.centerId, label: e.name))

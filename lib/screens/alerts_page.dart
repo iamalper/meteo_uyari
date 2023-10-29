@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/themes.dart';
 import '../models/alert.dart';
 
 class AlertsPage extends StatefulWidget {
@@ -23,7 +24,10 @@ class _AlertsPageState extends State<AlertsPage>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("${widget.cityName} için hava durumu uyarıları"),
+        Text(
+          "${widget.cityName} için hava durumu uyarıları",
+          style: const MyTextStyles.big(),
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
@@ -32,7 +36,10 @@ class _AlertsPageState extends State<AlertsPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset("assets/screen_icons/safe-weather.png"),
-                      const Text("Herhangi bir uyarı yok"),
+                      const Text(
+                        "Herhangi bir uyarı yok",
+                        style: MyTextStyles.medium(),
+                      ),
                     ],
                   )
                 : ListView.separated(

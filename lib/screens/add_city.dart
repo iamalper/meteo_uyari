@@ -38,7 +38,7 @@ class AddCityPage extends StatelessWidget {
                       cities.remove(savedCity);
                     }
                   }
-                  return AddCityPageLoaded(
+                  return _AddCityPageLoaded(
                     cities: cities,
                   );
                 } else {
@@ -51,15 +51,15 @@ class AddCityPage extends StatelessWidget {
   }
 }
 
-class AddCityPageLoaded extends StatefulWidget {
+class _AddCityPageLoaded extends StatefulWidget {
   final List<City> cities;
-  const AddCityPageLoaded({super.key, required this.cities});
+  const _AddCityPageLoaded({required this.cities});
 
   @override
-  State<AddCityPageLoaded> createState() => _AddCityPageLoadedState();
+  State<_AddCityPageLoaded> createState() => _AddCityPageLoadedState();
 }
 
-class _AddCityPageLoadedState extends State<AddCityPageLoaded> {
+class _AddCityPageLoadedState extends State<_AddCityPageLoaded> {
   City? selectedCity;
   @override
   Widget build(BuildContext context) {
