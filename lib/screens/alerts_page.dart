@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meteo_uyari/themes.dart';
 import '../models/alert.dart';
 
-class AlertsPage extends StatefulWidget {
+class AlertsPage extends StatelessWidget {
   ///[alerts] are shown to user.
   ///
   ///It's safe to pass empty list.
@@ -13,29 +13,27 @@ class AlertsPage extends StatefulWidget {
 
   ///Page for listing alerts for a single city.
   const AlertsPage({super.key, required this.alerts, required this.cityName});
-
-  @override
-  State<AlertsPage> createState() => _AlertsPageState();
-}
-
-class _AlertsPageState extends State<AlertsPage>
-    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          "${widget.cityName} için hava durumu uyarıları",
+          "$cityName için hava durumu uyarıları",
           style: const MyTextStyles.big(),
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: widget.alerts.isEmpty
+            child: alerts.isEmpty
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("assets/screen_icons/safe-weather.png"),
+                      Image.asset(
+                        "assets/screen_icons/safe-weather.png",
+                        height: MediaQuery.sizeOf(context).height / 3,
+                        width: MediaQuery.sizeOf(context).width / 3,
+                        fit: BoxFit.contain,
+                      ),
                       const Text(
                         "Herhangi bir uyarı yok",
                         style: MyTextStyles.medium(),
@@ -43,12 +41,11 @@ class _AlertsPageState extends State<AlertsPage>
                     ],
                   )
                 : ListView.separated(
-                    itemBuilder: (context, index) =>
-                        widget.alerts[index].listTile,
+                    itemBuilder: (context, index) => alerts[index].listTile,
                     separatorBuilder: (context, index) => const Divider(
                           height: 5,
                         ),
-                    itemCount: widget.alerts.length),
+                    itemCount: alerts.length),
           ),
         ),
       ],
