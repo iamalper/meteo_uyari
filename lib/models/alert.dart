@@ -57,8 +57,8 @@ class Alert {
             .singleWhere((element) => element.name == map["hadise"]),
         description = map["description"],
         towns = (map["towns"] as List).cast<int>(),
-        beginTime = DateTime.fromMillisecondsSinceEpoch(map["beginTime"]),
-        endTime = DateTime.fromMillisecondsSinceEpoch(map["endTime"]);
+        beginTime = DateTime.fromMillisecondsSinceEpoch(map["begin_time"]),
+        endTime = DateTime.fromMillisecondsSinceEpoch(map["end_time"]);
 
   Color get color {
     switch (severity) {

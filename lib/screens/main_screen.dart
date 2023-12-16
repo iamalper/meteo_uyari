@@ -6,8 +6,8 @@ import 'package:meteo_uyari/classes/helpers.dart';
 import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/add_city.dart';
 import 'package:meteo_uyari/screens/alerts_page_view.dart';
-import '../classes/firestore.dart';
 import '../classes/messagging.dart';
+import '../classes/supabase_database.dart';
 import '../view_models/warning_containter.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import '../themes.dart' as my_themes;
@@ -116,7 +116,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                       return AlertsPageView(
                                           pageController: _pageController,
                                           cities: _cities,
-                                          data: data,
+                                          data: data.toList(),
                                           tabController: _tabController);
                                     }
                                   case ConnectionState.waiting:

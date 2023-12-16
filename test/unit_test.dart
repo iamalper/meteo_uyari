@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meteo_uyari/classes/firestore.dart';
 import 'package:meteo_uyari/classes/get_cities.dart';
+import 'package:meteo_uyari/classes/supabase_database.dart';
 import 'package:meteo_uyari/models/alert.dart';
 import 'package:meteo_uyari/models/city.dart';
 
