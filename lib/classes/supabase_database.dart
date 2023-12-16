@@ -2,9 +2,11 @@ import "package:meteo_uyari/models/alert.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 
 import "../models/city.dart";
+import "helpers.dart";
 
 ///Get iteratable of [Alert]'s from Supabase Database
 Future<Iterable<Alert>> getAlerts(Iterable<City> cities) async {
+  await initSupabase();
   final result = await Supabase.instance.client
       .from("alerts")
       .select()

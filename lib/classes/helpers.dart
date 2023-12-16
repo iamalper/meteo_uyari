@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'messagging.dart' as messaging;
 import '../models/city.dart';
 import 'package:localstore/localstore.dart';
@@ -37,4 +39,20 @@ Future<void> deleteCity(City city) async {
     messaging.unsubscribeFromCity(city)
   ]);
   log("$city removed", name: "Helpers");
+}
+
+///Initalize Supabase services.
+///
+///Safe to call twice.
+Future<void> initSupabase() async {
+  try {
+    await Supabase.initialize(
+        url: "https://srdtccwudnoamyjhkojo.supabase.co",
+        anonKey:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZHRjY3d1ZG5vYW15amhrb2pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTkxNzkwNjksImV4cCI6MjAxNDc1NTA2OX0.2PV-c8i0UgDqxzc-jQKHXWXj-cUIaz-MmKjp6dl78uQ");
+    log("SUpabase initalized");
+  } on AssertionError catch (_) {
+    //Exception throws if supabase initalized more than one
+    log("Supabase initalized before, skipping");
+  }
 }
