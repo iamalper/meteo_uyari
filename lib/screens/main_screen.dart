@@ -25,12 +25,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late final _cities = widget.savedCities;
   final _pageController = PageController();
   late var _tabController = TabController(length: _cities.length, vsync: this);
-
+  var devMode = false;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       scrollBehavior: _AppScrollBehavior(),
       debugShowCheckedModeBanner: false,
+      themeMode:
+          ThemeMode.light, //FIXME: Dark theme has issues with alert view.
       theme: my_themes.myLightTheme,
       darkTheme: my_themes.myDarkTheme,
       home: Builder(
@@ -52,7 +54,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         if (index != null && _cities.length > index) {
                           _onRemoveCityButtonPressed(context, _cities[index]);
                         }
-                      })
+                      }),
+                  FloatingActionButton.small(
+                      heroTag: null,
+                      tooltip: "Geliştirici Modu",
+                      child: const Icon(Icons.developer_mode),
+                      onPressed: () {
+                        setState(() {
+                          devMode = !devMode;
+                        });
+                      }),
                 ]),
                 appBar: AppBar(
                   title: const Text(
@@ -114,10 +125,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     } else {
                                       final data = snapshot.data!;
                                       return AlertsPageView(
-                                          pageController: _pageController,
-                                          cities: _cities,
-                                          data: data.toList(),
-                                          tabController: _tabController);
+                                        pageController: _pageController,
+                                        cities: _cities,
+                                        data: data.toList(),
+                                        tabController: _tabController,
+                                        devMode: devMode,
+                                      );
                                     }
                                   case ConnectionState.waiting:
                                     return const Center(
