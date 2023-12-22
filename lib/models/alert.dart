@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/view_models/alert_details_view.dart';
 import '../view_models/alert_view.dart';
 import 'city.dart';
+import 'formatted_datetime.dart';
 
 enum Hadise {
   cold("Soğuk"),
@@ -36,8 +38,8 @@ class Alert {
   ///
   ///They can be comperated with [City.centerIdInt]
   final List<int> towns;
-  final DateTime beginTime;
-  final DateTime endTime;
+  final FormattedDateTime beginTime;
+  final FormattedDateTime endTime;
 
   const Alert({
     required this.no,
@@ -57,8 +59,9 @@ class Alert {
             .singleWhere((element) => element.name == map["hadise"]),
         description = map["description"],
         towns = (map["towns"] as List).cast<int>(),
-        beginTime = DateTime.fromMillisecondsSinceEpoch(map["begin_time"]),
-        endTime = DateTime.fromMillisecondsSinceEpoch(map["end_time"]);
+        beginTime =
+            FormattedDateTime.fromMillisecondsSinceEpoch(map["begin_time"]),
+        endTime = FormattedDateTime.fromMillisecondsSinceEpoch(map["end_time"]);
 
   Color get color {
     switch (severity) {
@@ -81,10 +84,12 @@ class Alert {
         "endTime": endTime.millisecondsSinceEpoch
       };
 
+  MaterialPageRoute<void> get detailsPageRoute => alertDetailsView(this);
+
   @override
   int get hashCode => no.hashCode;
 
-  ListTile get listTile => alertListTile(this);
+  StatelessWidget get alertBoxTile => AlertBoxView(this);
 
   @override
   String toString() =>

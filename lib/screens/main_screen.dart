@@ -26,6 +26,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   final _pageController = PageController();
   late var _tabController = TabController(length: _cities.length, vsync: this);
   var devMode = false;
+  final _fabKey = GlobalKey<ExpandableFabState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,7 +39,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       home: Builder(
           builder: (context) => Scaffold(
                 floatingActionButtonLocation: ExpandableFab.location,
-                floatingActionButton: ExpandableFab(children: [
+                floatingActionButton: ExpandableFab(key: _fabKey, children: [
                   FloatingActionButton.small(
                     heroTag: null,
                     tooltip: "Şehir ekle",
@@ -63,6 +64,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         setState(() {
                           devMode = !devMode;
                         });
+                        _fabKey.currentState?.toggle();
                       }),
                 ]),
                 appBar: AppBar(

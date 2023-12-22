@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/themes.dart';
 import '../models/alert.dart';
+import '../models/formatted_datetime.dart';
 
 class AlertsPage extends StatelessWidget {
   ///[alerts] are shown to user.
@@ -69,7 +70,7 @@ class _AlertList extends StatelessWidget {
     //https://github.com/flutter/flutter/issues/86584#issuecomment-916407888
     return Material(
       child: ListView.separated(
-        itemBuilder: (context, index) => alerts[index].listTile,
+        itemBuilder: (context, index) => alerts[index].alertBoxTile,
         separatorBuilder: (context, index) => const Divider(
           height: 5,
         ),
@@ -81,19 +82,19 @@ class _AlertList extends StatelessWidget {
 
 final _demoAlerts = [
   Alert(
-      no: "234234",
+      no: "230134",
       severity: Severity.orange,
       hadise: Hadise.hot,
       description: "deneme deneme",
-      towns: [324234],
-      beginTime: DateTime.now(),
-      endTime: DateTime.now()),
+      towns: [938234],
+      beginTime: FormattedDateTime.now(),
+      endTime: FormattedDateTime.now()),
   Alert(
-      no: "234235",
+      no: "23835",
       severity: Severity.red,
       hadise: Hadise.wind,
       description: "deneme deneme 123 123",
-      towns: [324234],
-      beginTime: DateTime.now(),
-      endTime: DateTime.now())
+      towns: [901234],
+      beginTime: FormattedDateTime.now(),
+      endTime: FormattedDateTime.now())
 ];
