@@ -149,8 +149,6 @@ jobs:
 
   google_play_publish:
     runs-on: ubuntu-latest
-    #if: ${{ github.ref_name == 'main' }}
-    if: false
     needs: [release]
     steps:
     - uses: actions/checkout@v2
@@ -163,7 +161,6 @@ jobs:
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJsonPlainText: #${{ secrets.PLAY_SERVICE_ACCOUNT }}
-        packageName: com.alper.weepy
+        packageName: com.alper.meteo_uyari
         releaseFiles: bundle/release/app-release.aab
-        track: beta
-        whatsNewDirectory: whatsnew
+        track: internal
