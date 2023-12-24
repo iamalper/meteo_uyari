@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:meteo_uyari/view_models/alert_view.dart';
+import 'package:meteo_uyari/models/town.dart';
+import 'package:meteo_uyari/view_models/alert_details_view.dart';
+import '../view_models/alert_view.dart';
+import 'city.dart';
+import 'formatted_datetime.dart';
 
 enum Hadise {
-  cold,
-  hot,
-  fog,
-  agricultural,
-  ice,
-  dust,
-  snowmelt,
-  avalanche,
-  snow,
-  thunderstorm,
-  wind,
-  rain
+  cold("Soğuk"),
+  hot("Sıcak"),
+  fog("Sis"),
+  agricultural("Zirai don"),
+  ice("Buzlanma ve Don"),
+  dust("Toz Taşınımı"),
+  snowmelt("Kar Erimesi"),
+  avalanche("Çığ"),
+  snow("Kar"),
+  thunderstorm("Gökgürültülü Sağanak Yağış"),
+  wind("Rüzgar"),
+  rain("Yağmur");
+
+  const Hadise(this.baslik);
+  final String baslik;
 }
 
 enum Severity { yellow, orange, red }
@@ -24,10 +31,16 @@ class Alert {
 
   final Severity severity;
   final Hadise hadise;
+
+  ///Turkish, latin5 encoded description for [Alert]
   final String description;
-  final List<String> towns;
-  final DateTime beginTime;
-  final DateTime endTime;
+
+  ///The [Town]'s which affected for [Alert]
+  ///
+  ///[Town.id] can be comperated with [City.centerIdInt]
+  final Set<Town> towns;
+  final FormattedDateTime beginTime;
+  final FormattedDateTime endTime;
 
   const Alert({
     required this.no,
@@ -46,9 +59,10 @@ class Alert {
         hadise = Hadise.values
             .singleWhere((element) => element.name == map["hadise"]),
         description = map["description"],
-        towns = map["towns"],
-        beginTime = DateTime.fromMillisecondsSinceEpoch(map["beginTime"]),
-        endTime = DateTime.fromMillisecondsSinceEpoch(map["endTime"]);
+        towns = {for (final townId in map["towns"]) Town(id: townId)},
+        beginTime =
+            FormattedDateTime.fromMillisecondsSinceEpoch(map["begin_time"]),
+        endTime = FormattedDateTime.fromMillisecondsSinceEpoch(map["end_time"]);
 
   Color get color {
     switch (severity) {
@@ -63,18 +77,20 @@ class Alert {
 
   Map<String, dynamic> get toMap => {
         "no": no,
-        "severity": severity.toString(),
-        "hadise": hadise.toString(),
+        "severity": severity.name,
+        "hadise": hadise.name,
         "description": description,
-        "towns": towns,
+        "towns": {for (final town in towns) town.id},
         "beginTime": beginTime.millisecondsSinceEpoch,
         "endTime": endTime.millisecondsSinceEpoch
       };
 
+  MaterialPageRoute<void> get detailsPageRoute => alertDetailsView(this);
+
   @override
   int get hashCode => no.hashCode;
 
-  ListTile get listTile => alertListTile(this);
+  StatelessWidget get alertBoxTile => AlertBoxView(this);
 
   @override
   String toString() =>

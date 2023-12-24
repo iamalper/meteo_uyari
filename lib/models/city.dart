@@ -1,16 +1,30 @@
 import 'town.dart';
+import 'alert.dart';
 
 class City {
+  ///City's name. It can be shown to user.
   final String name;
-  List<Town>? towns;
+
+  ///The towns which belongs to [City].
+  ///
+  ///Not yet implemented.
+  final Set<Town>? towns;
 
   ///Unique for all Cities.
+  ///
+  ///It's center town for MeteoUyari api and returns as a [String].
+  ///
+  ///[Alert.towns] contains this value as [int],
+  ///for comparing use [City.centerIdInt]
   final String centerId;
-  City({required this.name, this.towns, required this.centerId});
+  const City({required this.name, this.towns, required this.centerId});
   City.fromMap(Map<String, dynamic> map)
       : centerId = map["centerId"],
-        name = map["name"];
+        name = map["name"],
+        towns = null;
 
+  ///[centerId] as [int] value for comparing with any [Alert] object
+  int get centerIdInt => int.parse(centerId);
   Map<String, dynamic> get toMap => {"centerId": centerId, "name": name};
   @override
   String toString() => "Name: $name, towns: $towns, centerId: $centerId";

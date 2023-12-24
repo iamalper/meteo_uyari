@@ -5,6 +5,7 @@ import 'warnings.dart';
 import '../../models/city.dart';
 import 'select_location.dart';
 import 'alerts_intro.dart';
+import '../../themes.dart' as my_themes;
 
 class Intro extends StatefulWidget {
   const Intro({super.key});
@@ -21,28 +22,33 @@ class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      darkTheme: my_themes.myDarkTheme,
+      theme: my_themes.myLightTheme,
       home: Scaffold(
         body: SafeArea(
-          child: PageView(
-            controller: _controller,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              SelectLocation(
-                onLocationSet: (city) {
-                  _city = city;
-                  _gotoPage(1);
-                },
-              ),
-              AlertsIntro(
-                onContiune: () => _gotoPage(2),
-              ),
-              Warnings(
-                onContiune: (isDebugPressed) async {
-                  await helpers.setNotifications(_city!);
-                  await main();
-                },
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PageView(
+              controller: _controller,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                SelectLocation(
+                  onLocationSet: (city) {
+                    _city = city;
+                    _gotoPage(1);
+                  },
+                ),
+                AlertsIntro(
+                  onContiune: () => _gotoPage(2),
+                ),
+                Warnings(
+                  onContiune: () async {
+                    await helpers.setNotificationForNewCity(_city!);
+                    await main();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

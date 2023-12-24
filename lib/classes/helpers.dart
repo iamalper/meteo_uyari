@@ -1,32 +1,58 @@
 import 'dart:developer';
-import 'messagging.dart' as messaging;
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/city.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-///Saves [city],and registers pusn notifications for [city]
+import 'messagging.dart' as messaging;
+import '../models/city.dart';
+import 'package:localstore/localstore.dart';
+
+final _db = Localstore.instance;
+final _savedCitiesCollection = _db.collection("savedCities");
+
+///Save the city and setup push notifications.
 ///
-///Returns [false] if notification permission can't granted.
-Future<bool> setNotifications(City city) async {
-  final sp = await SharedPreferences.getInstance();
-  await sp.setString("savedCityId", city.centerId);
-  await sp.setString("savedCityName", city.name);
+///If called for same [city] multiple times, it has no effect.
+///
+///Returns [false] if notification permission denied by user.
+Future<bool> setNotificationForNewCity(City city) async {
   final result = await messaging.setup(city);
   if (result) {
-    log("Notifications set for: $city", name: "Backend");
+    await _savedCitiesCollection.doc(city.centerId).set(city.toMap);
+    log("Notifications set for: $city", name: "Helpers");
   } else {
-    log("Notification permission denied.", name: "Backend");
+    log("Notification permission denied.", name: "Helpers");
   }
   return result;
 }
 
-Future<City?> getSavedCity() async {
-  final sp = await SharedPreferences.getInstance();
-  final cityId = sp.getString("savedCityId");
-  final cityName = sp.getString("savedCityName");
-  if (cityName == null || cityId == null) {
-    return null;
-  } else {
-    final savedCity = City(centerId: cityId, name: cityName);
-    return savedCity;
+///Get all saved [City] objects with [Localstore]
+///
+///Returns empty [List] if no city saved with [setNotificationForNewCity()]
+Future<List<City>> getSavedCities() async {
+  final citiesMap = await _savedCitiesCollection.get();
+  return citiesMap?.values.map((e) => City.fromMap(e)).toList() ?? [];
+}
+
+///Deletes previously saved [city] and unsubscribes from [city] notifications
+Future<void> deleteCity(City city) async {
+  await Future.wait([
+    _savedCitiesCollection.doc(city.centerId).delete(),
+    messaging.unsubscribeFromCity(city)
+  ]);
+  log("$city removed", name: "Helpers");
+}
+
+///Initalize Supabase services.
+///
+///Safe to call twice.
+Future<void> initSupabase() async {
+  try {
+    await Supabase.initialize(
+        url: "https://srdtccwudnoamyjhkojo.supabase.co",
+        anonKey:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZHRjY3d1ZG5vYW15amhrb2pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTkxNzkwNjksImV4cCI6MjAxNDc1NTA2OX0.2PV-c8i0UgDqxzc-jQKHXWXj-cUIaz-MmKjp6dl78uQ");
+    log("SUpabase initalized");
+  } on AssertionError catch (_) {
+    //Exception throws if supabase initalized more than one
+    log("Supabase initalized before, skipping");
   }
 }

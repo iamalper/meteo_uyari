@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/themes.dart';
 import '../../classes/get_cities.dart';
 import '../../models/city.dart';
 
@@ -13,7 +14,11 @@ class SelectLocation extends StatelessWidget {
         future: getCities(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return SelectLocationLoaded(
+            final error = snapshot.error;
+            if (error != null) {
+              throw error;
+            }
+            return _SelectLocationLoaded(
               cities: snapshot.data!,
               onLocationSet: onLocationSet,
             );
@@ -24,48 +29,52 @@ class SelectLocation extends StatelessWidget {
   }
 }
 
-class SelectLocationLoaded extends StatefulWidget {
+class _SelectLocationLoaded extends StatefulWidget {
   final void Function(City city) onLocationSet;
   final List<City> cities;
-  const SelectLocationLoaded(
-      {super.key, required this.cities, required this.onLocationSet});
+  const _SelectLocationLoaded(
+      {required this.cities, required this.onLocationSet});
 
   @override
-  State<SelectLocationLoaded> createState() => _SelectLocationLoadedState();
+  State<_SelectLocationLoaded> createState() => _SelectLocationLoadedState();
 }
 
-class _SelectLocationLoadedState extends State<SelectLocationLoaded> {
-  City? selectedCity;
-  bool buttonAvailable = false;
+class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
+  City? _selectedCity;
+  late final _onLocationSet = widget.onLocationSet;
+  late final _cities = widget.cities;
+  var _buttonAvailable = false;
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        const Text("Hava uyarılarını almak için bulunduğunuz yeri seçin"),
+        const Text(
+          "Hava uyarılarını almak için bulunduğunuz yeri seçin",
+          style: MyTextStyles.medium(),
+        ),
         DropdownMenu(
-          dropdownMenuEntries: widget.cities
+          dropdownMenuEntries: _cities
               .map((e) => DropdownMenuEntry(value: e.centerId, label: e.name))
               .toList(),
           onSelected: (index) {
             if (index != null) {
-              selectedCity =
-                  widget.cities.singleWhere((city) => city.centerId == index);
+              _selectedCity =
+                  _cities.singleWhere((city) => city.centerId == index);
               setState(() {
-                buttonAvailable = true;
+                _buttonAvailable = true;
               });
             } else {
-              selectedCity == null;
+              _selectedCity == null;
               setState(() {
-                buttonAvailable = false;
+                _buttonAvailable = false;
               });
             }
           },
         ),
         ElevatedButton(
-            onPressed: buttonAvailable
-                ? () => widget.onLocationSet(selectedCity!)
-                : null,
+            onPressed:
+                _buttonAvailable ? () => _onLocationSet(_selectedCity!) : null,
             child: const Text("Devam")),
       ],
     );
