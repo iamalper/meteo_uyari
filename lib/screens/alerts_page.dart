@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/models/town.dart';
 import 'package:meteo_uyari/themes.dart';
 import '../models/alert.dart';
 import '../models/formatted_datetime.dart';
@@ -27,6 +28,10 @@ class AlertsPage extends StatelessWidget {
         Text(
           "$cityName için hava durumu uyarıları",
           style: const MyTextStyles.big(),
+        ),
+        Divider(
+          height: MediaQuery.sizeOf(context).height * 0.02,
+          color: Colors.transparent,
         ),
         if (devMode)
           Expanded(
@@ -71,8 +76,9 @@ class _AlertList extends StatelessWidget {
     return Material(
       child: ListView.separated(
         itemBuilder: (context, index) => alerts[index].alertBoxTile,
-        separatorBuilder: (context, index) => const Divider(
-          height: 5,
+        separatorBuilder: (context, index) => Divider(
+          height: MediaQuery.sizeOf(context).height * 0.02,
+          color: Colors.transparent,
         ),
         itemCount: alerts.length,
       ),
@@ -86,15 +92,15 @@ final _demoAlerts = [
       severity: Severity.orange,
       hadise: Hadise.hot,
       description: "deneme deneme",
-      towns: [938234],
+      towns: {Town(id: 93855)},
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now()),
   Alert(
-      no: "23835",
+      no: "230134",
       severity: Severity.red,
       hadise: Hadise.wind,
       description: "deneme deneme 123 123",
-      towns: [901234],
+      towns: {Town(id: 94523)},
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now())
 ];

@@ -3,6 +3,8 @@ import 'package:meteo_uyari/models/alert.dart';
 import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/alerts_page.dart';
 
+import '../models/town.dart';
+
 class AlertsPageView extends StatefulWidget {
   ///[PageView] for listing [AlertsPage] pages
   ///and managing slide effects.
@@ -58,8 +60,8 @@ class _AlertsPageViewState extends State<AlertsPageView> {
               (_pagePosition - index).abs(), //FIXME: Opaque may out of range
           child: AlertsPage(
             alerts: _data
-                .where((element) =>
-                    element.towns.contains(_cities[index].centerIdInt))
+                .where((element) => element.towns
+                    .contains(Town(id: _cities[index].centerIdInt)))
                 .toList(),
             cityName: _cities[index].name,
             //key: ValueKey(index),

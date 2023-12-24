@@ -8,7 +8,7 @@ class City {
   ///The towns which belongs to [City].
   ///
   ///Not yet implemented.
-  final List<Town>? towns;
+  final Set<Town>? towns;
 
   ///Unique for all Cities.
   ///

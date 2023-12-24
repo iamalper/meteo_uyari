@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/models/town.dart';
 import 'package:meteo_uyari/view_models/alert_details_view.dart';
 import '../view_models/alert_view.dart';
 import 'city.dart';
@@ -34,10 +35,10 @@ class Alert {
   ///Turkish, latin5 encoded description for [Alert]
   final String description;
 
-  ///The Town ids which affected for [Alert]
+  ///The [Town]'s which affected for [Alert]
   ///
-  ///They can be comperated with [City.centerIdInt]
-  final List<int> towns;
+  ///[Town.id] can be comperated with [City.centerIdInt]
+  final Set<Town> towns;
   final FormattedDateTime beginTime;
   final FormattedDateTime endTime;
 
@@ -58,7 +59,7 @@ class Alert {
         hadise = Hadise.values
             .singleWhere((element) => element.name == map["hadise"]),
         description = map["description"],
-        towns = (map["towns"] as List).cast<int>(),
+        towns = {for (final townId in map["towns"]) Town(id: townId)},
         beginTime =
             FormattedDateTime.fromMillisecondsSinceEpoch(map["begin_time"]),
         endTime = FormattedDateTime.fromMillisecondsSinceEpoch(map["end_time"]);
@@ -76,10 +77,10 @@ class Alert {
 
   Map<String, dynamic> get toMap => {
         "no": no,
-        "severity": severity.toString(),
-        "hadise": hadise.toString(),
+        "severity": severity.name,
+        "hadise": hadise.name,
         "description": description,
-        "towns": towns,
+        "towns": {for (final town in towns) town.id},
         "beginTime": beginTime.millisecondsSinceEpoch,
         "endTime": endTime.millisecondsSinceEpoch
       };

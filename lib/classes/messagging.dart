@@ -53,7 +53,8 @@ Future<void> unsubscribeFromCity(City city) async {
     futures.add(messaging.unsubscribeFromTopic(city.centerId));
     final towns = city.towns;
     if (towns != null) {
-      futures.addAll(towns.map((e) => messaging.unsubscribeFromTopic(e.id)));
+      futures.addAll(
+          towns.map((e) => messaging.unsubscribeFromTopic(e.id.toString())));
     }
     await Future.wait(futures);
   }
