@@ -13,14 +13,12 @@ class AlertsPageView extends StatefulWidget {
       required this.pageController,
       required this.cities,
       required this.data,
-      required this.tabController,
-      this.devMode = false});
+      required this.tabController});
 
   final PageController pageController;
   final List<City> cities;
   final List<Alert> data;
   final TabController tabController;
-  final bool devMode;
 
   @override
   State<AlertsPageView> createState() => _AlertsPageViewState();
@@ -31,7 +29,6 @@ class _AlertsPageViewState extends State<AlertsPageView> {
   late final _cities = widget.cities;
   late final _data = widget.data;
   late final _tabController = widget.tabController;
-  late final _devMode = widget.devMode;
   late var _pagePosition = _pageController.initialPage.toDouble();
   double get _screenSizeY => MediaQuery.sizeOf(context).height;
   @override
@@ -65,7 +62,6 @@ class _AlertsPageViewState extends State<AlertsPageView> {
                 .toList(),
             cityName: _cities[index].name,
             //key: ValueKey(index),
-            devMode: _devMode,
           ),
         ),
       ),
