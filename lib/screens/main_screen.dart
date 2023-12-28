@@ -7,8 +7,9 @@ import 'package:meteo_uyari/classes/helpers.dart';
 import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/add_city.dart';
 import 'package:meteo_uyari/screens/alerts_page_view.dart';
+import 'package:meteo_uyari/screens/debug_info_page.dart';
 import '../classes/messagging.dart';
-import '../classes/supabase_database.dart';
+import '../classes/supabase.dart';
 import '../models/alert.dart';
 import '../models/formatted_datetime.dart';
 import '../models/town.dart';
@@ -79,7 +80,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       onPressed: () => setState(() {}),
                       icon: const Icon(Icons.refresh),
                       tooltip: "Refresh",
-                    )
+                    ),
+                    if (devMode)
+                      IconButton(
+                        onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => const DebugInfoPage())),
+                        icon: const Icon(Icons.developer_mode),
+                        tooltip: "Debug",
+                      )
                   ],
                   bottom: TabBar(
                     controller: _tabController,
@@ -98,9 +107,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     Padding(
                       padding: const EdgeInsetsDirectional.all(10),
                       child: FutureBuilder(
-                        future: isPermissionGranted,
+                        future: isPermissionGranted(),
                         builder: (context, snapshot) {
                           if (snapshot.data == false) {
+                            //Android does not require permission and firebase does not initalize for desktop
                             return warningContainer("Bildirimler devre dışı.",
                                 "Bildirimleri etkinleştir", () async {
                               if (await getPermission()) {

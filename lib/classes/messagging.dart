@@ -1,8 +1,6 @@
 import 'dart:developer';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
 import '../models/city.dart';
 
 FirebaseMessaging? get _messagging {
@@ -16,6 +14,8 @@ FirebaseMessaging? get _messagging {
     return null;
   }
 }
+
+Future<String?> get fcmToken async => _messagging?.getToken();
 
 ///Setup push notifications for [city] and it's towns.
 ///
@@ -77,7 +77,7 @@ Future<bool> getPermission() async {
 ///Request permission with [getPermission()] or [setup()]
 ///
 ///For unsupported platforms, always returns [true]
-Future<bool> get isPermissionGranted async {
+Future<bool> isPermissionGranted() async {
   final messaging = _messagging;
   if (messaging == null) return true;
   return (await messaging.getNotificationSettings()).authorizationStatus ==

@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:meteo_uyari/models/alert.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
+import 'messagging.dart';
 
 import "../models/city.dart";
 import "exceptions.dart";
@@ -21,4 +22,14 @@ Future<Iterable<Alert>> getAlerts(Iterable<City> cities) async {
     throw const NetworkException();
   }
   return result;
+}
+
+Future<void> triggerTestNotification() async {
+  final token = await fcmToken;
+  await initSupabase();
+  final response = await Supabase.instance.client.functions
+      .invoke("send_test_notification", body: {"fmcToken": token});
+  if (response.status != 200) {
+    throw const NetworkException();
+  }
 }
