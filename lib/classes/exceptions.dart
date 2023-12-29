@@ -1,3 +1,8 @@
+///Contains custom exceptions for simplifiying error management and showing localised error messages to user.
+///
+///All exceptions should implement [MeteoUyariException]
+library;
+
 abstract class MeteoUyariException implements Exception {
   ///Base exception for MeteoUyari app.
   ///
@@ -8,6 +13,7 @@ abstract class MeteoUyariException implements Exception {
   String get message;
 }
 
+@Deprecated("App no longer have to manage storage space")
 class UnableToSaveCityException implements MeteoUyariException {
   ///Throw when city could not saved.
   ///

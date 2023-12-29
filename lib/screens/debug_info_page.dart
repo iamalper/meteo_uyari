@@ -11,7 +11,7 @@ class DebugInfoPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(),
         body: FutureBuilder(
-            future: messagging.fcmToken,
+            future: messagging.getFcmToken(),
             builder: (context, result) {
               final token = result.data;
               return ListView(children: [

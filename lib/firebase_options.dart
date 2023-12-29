@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'meteouyari',
     storageBucket: 'meteouyari.appspot.com',
   );
+
 }

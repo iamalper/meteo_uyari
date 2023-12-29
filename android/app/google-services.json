@@ -33,35 +33,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:634582251950:android:13e7a8203b48d82ca3703f",
-        "android_client_info": {
-          "package_name": "com.example.meteo_uyari"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634582251950-2mes98g1a8gunl5ujd0jssb5n4d7nmqf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBenfGvHDfnPXTuiZWpI-5z_gWla9VqDbk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "634582251950-2mes98g1a8gunl5ujd0jssb5n4d7nmqf.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"
