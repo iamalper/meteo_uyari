@@ -28,7 +28,7 @@ Future<void> triggerTestNotification() async {
   final token = await fcmToken;
   await initSupabase();
   final response = await Supabase.instance.client.functions
-      .invoke("send_test_notification", body: {"fmcToken": token});
+      .invoke("send_test_notification", body: {"fcmToken": token});
   if (response.status != 200) {
     throw const NetworkException();
   }
