@@ -3,12 +3,10 @@
 ///All exceptions should implement [MeteoUyariException]
 library;
 
+///Base exception for MeteoUyari app.
+///
+///See [message] for localised error messages.
 abstract class MeteoUyariException implements Exception {
-  ///Base exception for MeteoUyari app.
-  ///
-  ///See [message] for localised error messages.
-  const MeteoUyariException();
-
   ///Error message that shown to end user. Doesn't contains technical details.
   String get message;
 }
