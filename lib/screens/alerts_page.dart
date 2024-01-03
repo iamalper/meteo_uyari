@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meteo_uyari/models/town.dart';
 import 'package:meteo_uyari/themes.dart';
 import '../models/alert.dart';
-import '../models/formatted_datetime.dart';
 
 class AlertsPage extends StatelessWidget {
   ///[alerts] are shown to user.
@@ -13,14 +11,8 @@ class AlertsPage extends StatelessWidget {
   ///[cityName] is shown to user.
   final String cityName;
 
-  final bool devMode;
-
   ///Page for listing alerts for a single city.
-  const AlertsPage(
-      {super.key,
-      required this.alerts,
-      required this.cityName,
-      this.devMode = false});
+  const AlertsPage({super.key, required this.alerts, required this.cityName});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,11 +25,7 @@ class AlertsPage extends StatelessWidget {
           height: MediaQuery.sizeOf(context).height * 0.02,
           color: Colors.transparent,
         ),
-        if (devMode)
-          Expanded(
-            child: _AlertList(alerts: _demoAlerts),
-          )
-        else if (alerts.isEmpty)
+        if (alerts.isEmpty)
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -85,22 +73,3 @@ class _AlertList extends StatelessWidget {
     );
   }
 }
-
-final _demoAlerts = [
-  Alert(
-      no: "230134",
-      severity: Severity.orange,
-      hadise: Hadise.hot,
-      description: "deneme deneme",
-      towns: {Town(id: 93855)},
-      beginTime: FormattedDateTime.now(),
-      endTime: FormattedDateTime.now()),
-  Alert(
-      no: "230134",
-      severity: Severity.red,
-      hadise: Hadise.wind,
-      description: "deneme deneme 123 123",
-      towns: {Town(id: 94523)},
-      beginTime: FormattedDateTime.now(),
-      endTime: FormattedDateTime.now())
-];

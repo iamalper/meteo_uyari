@@ -85,6 +85,12 @@ class Alert {
         "endTime": endTime.millisecondsSinceEpoch
       };
 
+  ///Page route for pushing [alertDetailsView] to screen
+  ///
+  ///Example:
+  ///```dart
+  ///Navigator.of(context).push(alert.detailsPageRoute)
+  ///```
   MaterialPageRoute<void> get detailsPageRoute => alertDetailsView(this);
 
   @override
