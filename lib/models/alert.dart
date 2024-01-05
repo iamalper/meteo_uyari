@@ -54,15 +54,34 @@ class Alert {
 
   Alert.fromMap(Map<String, dynamic> map)
       : no = map["no"],
-        severity = Severity.values
-            .singleWhere((element) => element.name == map["severity"]),
-        hadise = Hadise.values
-            .singleWhere((element) => element.name == map["hadise"]),
+        severity = Severity.values.singleWhere(
+          (element) => element.name == map["severity"],
+        ),
+        hadise = Hadise.values.singleWhere((element) =>
+            element.name == map["hadise"] || element.baslik == map["hadise"]),
         description = map["description"],
-        towns = {for (final townId in map["towns"]) Town(id: townId)},
-        beginTime =
-            FormattedDateTime.fromMillisecondsSinceEpoch(map["begin_time"]),
-        endTime = FormattedDateTime.fromMillisecondsSinceEpoch(map["end_time"]);
+        //towns = {for (final townId in map["towns"]) Town(id: townId)},
+        towns = switch (map["town"]) {
+          String towns => {
+              for (final town in towns.split(",")) Town(id: int.parse(town))
+            },
+          List<int> towns => {for (final town in towns) Town(id: town)},
+          null => {},
+          _ => throw Error()
+        },
+        beginTime = switch (map["begin_time"]) {
+          int beginTime =>
+            FormattedDateTime.fromMillisecondsSinceEpoch(beginTime),
+          String beginTime =>
+            FormattedDateTime.fromMillisecondsSinceEpoch(int.parse(beginTime)),
+          _ => throw Error()
+        },
+        endTime = switch (map["end_time"]) {
+          int endTime => FormattedDateTime.fromMillisecondsSinceEpoch(endTime),
+          String endTime =>
+            FormattedDateTime.fromMillisecondsSinceEpoch(int.parse(endTime)),
+          _ => throw Error()
+        };
 
   Color get color {
     switch (severity) {

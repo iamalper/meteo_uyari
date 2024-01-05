@@ -141,11 +141,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     } else if (error != null) {
                                       throw error;
                                     } else {
-                                      final data = snapshot.data!;
+                                      final alerts = snapshot.data!.toList();
                                       return AlertsPageView(
                                         pageController: _pageController,
                                         cities: _cities,
-                                        data: data.toList(),
+                                        data: alerts,
                                         tabController: _tabController,
                                       );
                                     }

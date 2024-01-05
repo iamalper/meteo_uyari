@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/classes/messagging.dart';
 import 'package:meteo_uyari/models/alert.dart';
 import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/alerts_page.dart';
@@ -27,10 +30,11 @@ class AlertsPageView extends StatefulWidget {
 class _AlertsPageViewState extends State<AlertsPageView> {
   late final _pageController = widget.pageController;
   late final _cities = widget.cities;
-  late final _data = widget.data;
+  late final _allAlerts = widget.data;
   late final _tabController = widget.tabController;
   late var _pagePosition = _pageController.initialPage.toDouble();
   double get _screenSizeY => MediaQuery.sizeOf(context).height;
+  late StreamSubscription<Alert> _foregroundAlertSubscription;
   @override
   void initState() {
     _pageController.addListener(() {
@@ -40,6 +44,11 @@ class _AlertsPageViewState extends State<AlertsPageView> {
         });
       }
     });
+    /*_foregroundAlertSubscription = onForegroundAlert.listen((newAlert) {
+      setState(() {
+        _allAlerts.add(newAlert);
+      });
+    });*/
     super.initState();
   }
 
@@ -56,7 +65,7 @@ class _AlertsPageViewState extends State<AlertsPageView> {
           opacity: 1 -
               (_pagePosition - index).abs(), //FIXME: Opaque may out of range
           child: AlertsPage(
-            alerts: _data
+            alerts: _allAlerts
                 .where((element) => element.towns
                     .contains(Town(id: _cities[index].centerIdInt)))
                 .toList(),
@@ -67,5 +76,11 @@ class _AlertsPageViewState extends State<AlertsPageView> {
       ),
       onPageChanged: (value) => _tabController.animateTo(value),
     );
+  }
+
+  @override
+  void dispose() {
+    //_foregroundAlertSubscription.cancel();
+    super.dispose();
   }
 }

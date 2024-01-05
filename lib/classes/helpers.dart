@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'messagging.dart' as messaging;
@@ -7,6 +8,17 @@ import 'package:localstore/localstore.dart';
 
 final _db = Localstore.instance;
 final _savedCitiesCollection = _db.collection("savedCities");
+
+const _platform = MethodChannel("meteo-uyari");
+
+///Set a Notification Channel for Android.
+///
+///After channel set, some details can't be changed, user should reinstall the app.
+///
+///It is required for getting notifications foreground.
+Future<void> setNotificationChannel(String channelId, String channelName) =>
+    _platform.invokeMethod<void>(
+        "initChannel", {"channelId": channelId, "channelName": channelName});
 
 ///Save the city and setup push notifications.
 ///
@@ -39,20 +51,4 @@ Future<void> deleteCity(City city) async {
     messaging.unsubscribeFromCity(city)
   ]);
   log("$city removed", name: "Helpers");
-}
-
-///Initalize Supabase services.
-///
-///Safe to call twice.
-Future<void> initSupabase() async {
-  try {
-    await Supabase.initialize(
-        url: "https://srdtccwudnoamyjhkojo.supabase.co",
-        anonKey:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZHRjY3d1ZG5vYW15amhrb2pvIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTkxNzkwNjksImV4cCI6MjAxNDc1NTA2OX0.2PV-c8i0UgDqxzc-jQKHXWXj-cUIaz-MmKjp6dl78uQ");
-    log("SUpabase initalized");
-  } on AssertionError catch (_) {
-    //Exception throws if supabase initalized more than one
-    log("Supabase initalized before, skipping");
-  }
 }

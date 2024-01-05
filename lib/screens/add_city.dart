@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/classes/helpers.dart';
-import '../classes/get_cities.dart';
+import '../classes/supabase.dart' as supabase;
 import '../models/city.dart';
 
 class AddCityPage extends StatelessWidget {
@@ -21,7 +21,7 @@ class AddCityPage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: FutureBuilder(
-              future: getCities(),
+              future: supabase.getCities(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   final error = snapshot.error;

@@ -3,9 +3,11 @@
 ///Includes methods which are only work on FCM api.
 library;
 
+import 'dart:async';
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:meteo_uyari/models/alert.dart';
 import '../models/city.dart';
 
 ///Get default [FirebaseMessaging] instance
@@ -22,6 +24,10 @@ final _messaging = () {
     return null;
   }
 }();
+
+final onForegroundAlert = FirebaseMessaging.onMessage
+    .transform(_messageToAlertTransformer)
+    .asBroadcastStream();
 
 ///Returns cloud messaging token for notifications.
 ///
@@ -95,3 +101,17 @@ Future<bool> isPermissionGranted() async {
   return (await messaging.getNotificationSettings()).authorizationStatus ==
       AuthorizationStatus.authorized;
 }
+
+final _messageToAlertTransformer =
+    StreamTransformer<RemoteMessage, Alert>.fromBind((messageStream) async* {
+  await for (final message in messageStream) {
+    final alertMap = message.data;
+    if (alertMap["no"] == null) {
+      log("Foreground Message does not contain alert data");
+      continue;
+    }
+    log("Got foreground Alert message,$alertMap");
+    final alert = Alert.fromMap(alertMap);
+    yield alert;
+  }
+});
