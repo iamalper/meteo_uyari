@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +18,7 @@ import '../themes.dart' as my_themes;
 
 class MainScreen extends StatefulWidget {
   ///It should not be empty list
-  final List<City> savedCities;
+  final Set<City> savedCities;
   const MainScreen({super.key, required this.savedCities});
 
   @override
@@ -58,7 +57,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       onPressed: () {
                         final index = _pageController.page?.toInt();
                         if (index != null && _cities.length > index) {
-                          _onRemoveCityButtonPressed(context, _cities[index]);
+                          _onRemoveCityButtonPressed(
+                              context, _cities.elementAt(index));
                         }
                       }),
                   FloatingActionButton.small(
@@ -73,8 +73,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       }),
                 ]),
                 appBar: AppBar(
-                  title: const Text(
-                      kDebugMode ? "Meteo Uyarı (debug)" : "Meteo Uyarı"),
+                  title: Text("Meteo Uyarı (${buildType.name})"),
                   actions: [
                     IconButton(
                       onPressed: () => setState(() {}),

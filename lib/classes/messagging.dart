@@ -47,10 +47,8 @@ Future<bool> setup(City city) async {
     var futures = <Future<void>>[];
     futures.add(messaging.subscribeToTopic(city.centerId.toString()));
     final towns = city.towns;
-    if (towns != null) {
-      for (var town in towns) {
-        futures.add(messaging.subscribeToTopic(town.id.toString()));
-      }
+    for (var town in towns) {
+      futures.add(messaging.subscribeToTopic(town.id.toString()));
     }
     await Future.wait(futures);
     return true;
@@ -69,7 +67,7 @@ Future<void> unsubscribeFromCity(City city) async {
     final towns = city.towns;
     final futures = {
       messaging.unsubscribeFromTopic(city.centerId),
-      if (towns != null) ...{
+      ...{
         for (final town in towns)
           messaging.unsubscribeFromTopic(town.id.toString())
       }

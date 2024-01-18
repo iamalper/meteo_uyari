@@ -8,7 +8,7 @@ class City {
   ///The towns which belongs to [City].
   ///
   ///Not yet implemented.
-  final Set<Town>? towns;
+  final Set<Town> towns;
 
   ///Unique for all Cities.
   ///
@@ -17,15 +17,19 @@ class City {
   ///[Alert.towns] contains this value as [int],
   ///for comparing use [City.centerIdInt]
   final String centerId;
-  const City({required this.name, this.towns, required this.centerId});
+  const City(
+      {required this.name, this.towns = const {}, required this.centerId});
+
   City.fromMap(Map<String, dynamic> map)
-      : centerId = map["centerId"],
-        name = map["name"],
-        towns = null;
+      : this(
+            centerId: map["centerId"],
+            name: map["name"],
+            towns: map["towns"] ?? {});
 
   ///[centerId] as [int] value for comparing with any [Alert] object
   int get centerIdInt => int.parse(centerId);
-  Map<String, dynamic> get toMap => {"centerId": centerId, "name": name};
+  Map<String, dynamic> get toMap =>
+      {"centerId": centerId, "name": name, "towns": towns};
   @override
   String toString() => "Name: $name, towns: $towns, centerId: $centerId";
   @override

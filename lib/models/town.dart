@@ -24,16 +24,11 @@ class Town {
     assert(id.toString().length == 5);
     assert(cityCode >= 0 && cityCode <= 81);
   }
-
   Town.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        name = map["name"] {
-    assert(id.toString().startsWith("9"));
-    assert(id.toString().length == 5);
-    assert(cityCode >= 0 && cityCode <= 81);
-  }
+      : this(id: map["id"], name: map["name"]);
 
   Map<String, dynamic> get map => {"id": id, "name": name};
+
   @override
   String toString() => "Name: $name, Id: $id";
 
