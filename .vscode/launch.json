@@ -8,21 +8,21 @@
             "name": "meteo_uyari",
             "request": "launch",
             "type": "dart",
-            "toolArgs": ["--dart-define=buildType=1"]
+            "toolArgs": ["--dart-define=buildType=alpha"],
         },
         {
             "name": "meteo_uyari (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "toolArgs": ["--dart-define=buildType=1"]
+            "toolArgs": ["--dart-define=buildType=alpha"]
         },
         {
             "name": "meteo_uyari (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "toolArgs": ["--dart-define=buildType=1"]
+            "toolArgs": ["--dart-define=buildType=alpha"]
         }
     ]
 }

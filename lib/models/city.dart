@@ -24,12 +24,12 @@ class City {
       : this(
             centerId: map["centerId"],
             name: map["name"],
-            towns: map["towns"] ?? {});
+            towns: {for (final town in map["towns"]) Town.fromMap(town)});
 
   ///[centerId] as [int] value for comparing with any [Alert] object
   int get centerIdInt => int.parse(centerId);
   Map<String, dynamic> get toMap =>
-      {"centerId": centerId, "name": name, "towns": towns};
+      {"centerId": centerId, "name": name, "towns": towns.toList()};
   @override
   String toString() => "Name: $name, towns: $towns, centerId: $centerId";
   @override

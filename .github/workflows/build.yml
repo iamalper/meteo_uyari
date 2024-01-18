@@ -2,6 +2,19 @@ name: BuildTask
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        type: choice
+        description: "Build type for app"
+        options:
+          - alpha
+          - beta
+          - stable
+        required: true
+      publish:
+        type: boolean
+        description: "Wheter publish to Google Play after build."
+        default: false
 
 jobs:
   build_android:
@@ -59,10 +72,10 @@ jobs:
         run: flutter test
   
       - name: Start appbundle build
-        run: flutter build appbundle
+        run: flutter build appbundle --dart-define=buildType=${{ github.event.inputs.build_type }}
         
       - name: Start apk build
-        run: flutter build apk
+        run: flutter build apk --dart-define=buildType=${{ github.event.inputs.build_type }}
 
       - name: Uploading android packages
         uses: actions/upload-artifact@v2
@@ -108,7 +121,6 @@ jobs:
           files: | 
             flutter-apk/app-release.apk
             bundle/release/app-release.aab
-            *.deb
 
   version:
     name: Create version number
@@ -138,6 +150,7 @@ jobs:
 
   google_play_publish:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.publish }}
     needs: [release]
     steps:
     - uses: actions/checkout@v2

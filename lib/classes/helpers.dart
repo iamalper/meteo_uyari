@@ -23,7 +23,7 @@ Future<void> setNotificationChannel(
   } on MissingPluginException catch (_) {
     //This platform method implemented onnly for android
     //App executes this in standart workflow.
-    if (defaultTargetPlatform != TargetPlatform.android) {
+    if (defaultTargetPlatform == TargetPlatform.android) {
       rethrow;
     }
   }
@@ -58,7 +58,12 @@ Future<Set<City>> getSavedCities() async {
 
 enum MyBuildType { unknown, alpha, beta, stable }
 
-final buildType = MyBuildType.values[const int.fromEnvironment("buildType")];
+final buildType = switch (const String.fromEnvironment("buildType")) {
+  "alpha" => MyBuildType.alpha,
+  "beta" => MyBuildType.beta,
+  "stable" => MyBuildType.stable,
+  _ => MyBuildType.unknown
+};
 
 ///Deletes previously saved [city] and unsubscribes from [city] notifications
 Future<void> deleteCity(City city) async {
