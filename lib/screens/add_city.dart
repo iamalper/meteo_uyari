@@ -2,79 +2,79 @@ import 'package:flutter/material.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/classes/helpers.dart';
 import '../classes/supabase.dart' as supabase;
-import '../models/city.dart';
+import '../models/town.dart';
 
-class AddCityPage extends StatelessWidget {
-  ///Pass it for preventing user to select same cities
-  final List<City>? savedCities;
+class AddTownPage extends StatelessWidget {
+  ///Pass it for preventing user to select same [Town]'s
+  final List<Town>? existingTowns;
 
   ///Page for letting user adding another cities.
   ///
   ///If user adds city, it will setup notifications itself.
-  const AddCityPage({super.key, this.savedCities});
+  const AddTownPage({super.key, this.existingTowns});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: FutureBuilder(
-              future: supabase.getCities(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  final error = snapshot.error;
-                  if (error != null) {
-                    if (error is MeteoUyariException) {
-                      return Text(error.message);
-                    } else {
-                      throw error;
+        appBar: AppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: FutureBuilder(
+                future: supabase.getTowns(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    final error = snapshot.error;
+                    if (error != null) {
+                      if (error is MeteoUyariException) {
+                        return Text(error.message);
+                      } else {
+                        throw error;
+                      }
                     }
-                  }
-                  final cities = snapshot.data!;
-                  if (savedCities != null) {
-                    for (final savedCity in savedCities!) {
-                      cities.remove(savedCity);
+                    final towns = snapshot.data!;
+                    if (existingTowns != null) {
+                      for (final savedCity in existingTowns!) {
+                        towns.remove(savedCity);
+                      }
                     }
+                    return _AddTownLoaded(
+                      towns: towns,
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
                   }
-                  return _AddCityPageLoaded(
-                    cities: cities,
-                  );
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              }),
-        ),
-      ),
-    );
+                }),
+          ),
+        ));
   }
 }
 
-class _AddCityPageLoaded extends StatefulWidget {
-  final List<City> cities;
-  const _AddCityPageLoaded({required this.cities});
+class _AddTownLoaded extends StatefulWidget {
+  final List<Town> towns;
+  const _AddTownLoaded({required this.towns});
 
   @override
-  State<_AddCityPageLoaded> createState() => _AddCityPageLoadedState();
+  State<_AddTownLoaded> createState() => _AddTownLoadedState();
 }
 
-class _AddCityPageLoadedState extends State<_AddCityPageLoaded> {
-  City? selectedCity;
+class _AddTownLoadedState extends State<_AddTownLoaded> {
+  Town? selectedTown;
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        const Text("Şehir seçin"),
+        const Text("Yer seçin"),
         DropdownMenu(
-          dropdownMenuEntries: widget.cities
-              .map((e) => DropdownMenuEntry(value: e, label: e.name))
-              .toList(),
+          dropdownMenuEntries: [
+            for (final town in widget.towns)
+              DropdownMenuEntry(value: town, label: town.name)
+          ],
           onSelected: (value) {
             if (value != null) {
               setState(() {
-                selectedCity = value;
+                selectedTown = value;
               });
             }
           },
@@ -86,7 +86,7 @@ class _AddCityPageLoadedState extends State<_AddCityPageLoaded> {
                     final result =
                         await setNotificationForNewTown(selectedTown!);
                     if (result && mounted) {
-                      Navigator.pop(context, selectedCity);
+                      Navigator.pop(context, selectedTown);
                     }
                   },
             child: const Text("Tamam"))

@@ -87,6 +87,7 @@ Future<void> initSupabase() async {
 }
 
 ///Get list of [City]'s available from MeteoUyarı api
+@Deprecated("App no longer use cities. Use getTowns instead")
 Future<List<City>> getCities() async {
   await initSupabase();
   final response = await Supabase.instance.client.functions
@@ -100,14 +101,16 @@ Future<List<City>> getCities() async {
   return cities;
 }
 
-Future<List<Town>> getTowns(City? city) async {
+///Get list of [Town]'s available for [city] from MeteoUyarı api
+///
+///If [city] is omitted, returns all towns.
+Future<List<Town>> getTowns([City? city]) async {
   throw UnimplementedError();
   // ignore: dead_code
   await initSupabase();
-  final response = await Supabase.instance.client.functions
-      .invoke("get_towns", method: HttpMethod.get, body: {
-    if (city != null) ...{"city": city.toMap}
-  });
+  final response = await Supabase.instance.client.functions.invoke("get_towns",
+      method: HttpMethod.get,
+      body: city != null ? {"cityId": city.centerId} : null);
   if (response.status != 200) {
     log("Towns request status code ${response.status}");
     throw const NetworkException();

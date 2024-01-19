@@ -4,7 +4,7 @@ import 'city.dart';
 
 class Town {
   static final _formatter = NumberFormat("00");
-  final String? name;
+  final String name;
 
   ///Unique for all Towns.
   ///
@@ -23,7 +23,7 @@ class Town {
 
   final City parentCity;
 
-  Town({required this.id, required this.parentCity, this.name}) {
+  Town({required this.id, required this.parentCity, required this.name}) {
     assert(id.toString().startsWith("9"));
     assert(id.toString().length == 5);
     assert(cityCode >= 0 && cityCode <= 81);

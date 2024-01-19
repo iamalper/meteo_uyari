@@ -16,10 +16,12 @@ void main() {
         towns: {
           Town(
               id: 95634,
-              parentCity: const City(name: "testşehiri", centerId: "90200")),
+              parentCity: const City(name: "testşehiri", centerId: "90200"),
+              name: "Test bölgesi 1"),
           Town(
               id: 95635,
-              parentCity: const City(name: "testşehiri2", centerId: "90101"))
+              parentCity: const City(name: "testşehiri2", centerId: "90101"),
+              name: "Test bölgesi 2")
         });
     final alert2 = Alert(
         description: "test2",
@@ -31,10 +33,12 @@ void main() {
         towns: {
           Town(
               id: 93354,
-              parentCity: const City(name: "testşehiri2", centerId: "90101")),
+              parentCity: const City(name: "testşehiri2", centerId: "90101"),
+              name: "Test bölgesi 1"),
           Town(
               id: 93310,
-              parentCity: const City(name: "testşehiri", centerId: "90200")),
+              parentCity: const City(name: "testşehiri", centerId: "90200"),
+              name: "Test bölgesi 2"),
         });
     expect(alert1, equals(alert2),
         reason: "Alerts which has same alertNo, should equal");

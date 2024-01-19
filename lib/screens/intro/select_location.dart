@@ -70,7 +70,7 @@ class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
         DropdownMenu(
           dropdownMenuEntries: [
             for (final town in _selectedCity?.towns ?? <Town>{})
-              DropdownMenuEntry(value: town, label: town.name!)
+              DropdownMenuEntry(value: town, label: town.name)
           ],
           enabled: _selectedCity != null,
           onSelected: (value) {

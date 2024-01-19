@@ -171,7 +171,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     final addedTown = await Navigator.push<Town>(
         context,
         MaterialPageRoute(
-          builder: (context) => const AddCityPage(),
+          builder: (context) => const AddTownPage(),
         ));
     if (addedTown != null) {
       setState(() {
@@ -243,7 +243,8 @@ final _demoAlerts = [
         for (var i = 1; i < 81; i++)
           Town(
               id: int.parse("9${_cityCodeFormat(i)}01"),
-              parentCity: const City(name: "testşehiri", centerId: "901001"))
+              parentCity: const City(name: "testşehiri", centerId: "901001"),
+              name: "Test bölgesi")
       },
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now()),
@@ -256,7 +257,8 @@ final _demoAlerts = [
         for (var i = 1; i < 81; i++)
           Town(
               id: int.parse("9${_cityCodeFormat(i)}01"),
-              parentCity: const City(name: "2. testşehiri", centerId: "902001"))
+              parentCity: const City(name: "2. testşehiri", centerId: "902001"),
+              name: "Test bölgesi 2")
       },
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now())

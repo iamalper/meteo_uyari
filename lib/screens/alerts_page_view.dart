@@ -59,7 +59,7 @@ class _AlertsPageViewState extends State<AlertsPageView> {
               for (final alert in _allAlerts)
                 if (alert.towns.contains(_towns.elementAt(index))) alert
             ],
-            cityName: _towns.elementAt(index).name!,
+            cityName: _towns.elementAt(index).name,
             //key: ValueKey(index),
           ),
         ),
