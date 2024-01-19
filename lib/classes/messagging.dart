@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:meteo_uyari/models/alert.dart';
 import '../models/city.dart';
+import '../models/town.dart';
 
 ///Get default [FirebaseMessaging] instance
 ///
@@ -39,6 +40,7 @@ Future<String?> getFcmToken() async => _messaging?.getToken();
 ///Returns [false] if permission denied by user.
 ///
 ///For unsupported platforms, skips setup, returns [true].
+@Deprecated("App no longer use cities. Use setupForTown instead")
 Future<bool> setup(City city) async {
   final messaging = _messaging;
   if (messaging == null) return true;
@@ -57,10 +59,28 @@ Future<bool> setup(City city) async {
   }
 }
 
+///Setup push notifications for [town].
+///
+///Returns [false] if permission denied by user.
+///
+///For unsupported platforms, skips setup, returns [true].
+Future<bool> setupForTown(Town town) async {
+  final messaging = _messaging;
+  if (messaging == null) return true;
+  final result = await getPermission();
+  if (result) {
+    await messaging.subscribeToTopic(town.id.toString());
+    return true;
+  } else {
+    return false;
+  }
+}
+
 ///Unsubscribe from push notifications for [city] and it's towns.
 ///
 ///It has no effect if wasn't subscribed to [city] or calling
 ///from unsupported platforms.
+@Deprecated("App no longer use cities. Use unsubscribeFromTown instead")
 Future<void> unsubscribeFromCity(City city) async {
   final messaging = _messaging;
   if (messaging != null) {
@@ -73,6 +93,17 @@ Future<void> unsubscribeFromCity(City city) async {
       }
     };
     await Future.wait(futures);
+  }
+}
+
+///Unsubscribe from push notifications for [town].
+///
+///It has no effect if wasn't subscribed to [town] or calling
+///from unsupported platforms.
+Future<void> unsubscribeFromTown(Town town) async {
+  final messaging = _messaging;
+  if (messaging != null) {
+    await messaging.unsubscribeFromTopic(town.id.toString());
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:meteo_uyari/view_models/alert_details_view.dart';
 import '../view_models/alert_view.dart';
 import 'city.dart';
 import 'formatted_datetime.dart';
+import 'dart:convert';
 
 enum Hadise {
   cold("Soğuk"),
@@ -61,10 +62,14 @@ class Alert {
             element.name == map["hadise"] || element.baslik == map["hadise"]),
         description = map["description"],
         towns = switch (map["town"]) {
+          //For Firebase Cloud Messaging data payload, it is String because of limitation
           String towns => {
-              for (final town in towns.split(",")) Town(id: int.parse(town))
+              for (final town in towns.split(","))
+                Town.fromMap(jsonDecode(town))
             },
-          List<int> towns => {for (final town in towns) Town(id: town)},
+          List<Map<String, dynamic>> towns => {
+              for (final map in towns) Town.fromMap(map)
+            },
           null => {},
           _ => throw Error()
         },

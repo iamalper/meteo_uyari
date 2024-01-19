@@ -80,11 +80,11 @@ class _AddCityPageLoadedState extends State<_AddCityPageLoaded> {
           },
         ),
         ElevatedButton(
-            onPressed: selectedCity == null
+            onPressed: selectedTown == null
                 ? null
                 : () async {
                     final result =
-                        await setNotificationForNewCity(selectedCity!);
+                        await setNotificationForNewTown(selectedTown!);
                     if (result && mounted) {
                       Navigator.pop(context, selectedCity);
                     }

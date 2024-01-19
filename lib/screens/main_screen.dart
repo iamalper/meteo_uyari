@@ -18,17 +18,17 @@ import '../themes.dart' as my_themes;
 
 class MainScreen extends StatefulWidget {
   ///It should not be empty list
-  final Set<City> savedCities;
-  const MainScreen({super.key, required this.savedCities});
+  final Set<Town> savedTowns;
+  const MainScreen({super.key, required this.savedTowns});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  late final _cities = widget.savedCities;
+  late final _towns = widget.savedTowns;
   final _pageController = PageController();
-  late var _tabController = TabController(length: _cities.length, vsync: this);
+  late var _tabController = TabController(length: _towns.length, vsync: this);
   var devMode = false;
   final _fabKey = GlobalKey<ExpandableFabState>();
   @override
@@ -56,9 +56,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       child: const Icon(Icons.delete),
                       onPressed: () {
                         final index = _pageController.page?.toInt();
-                        if (index != null && _cities.length > index) {
+                        if (index != null && _towns.length > index) {
                           _onRemoveCityButtonPressed(
-                              context, _cities.elementAt(index));
+                              context, _towns.elementAt(index));
                         }
                       }),
                   FloatingActionButton.small(
@@ -91,7 +91,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   ],
                   bottom: TabBar(
                     controller: _tabController,
-                    tabs: _cities
+                    tabs: _towns
                         .map((e) => Tab(
                               text: e.name,
                             ))
@@ -130,7 +130,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           child: FutureBuilder(
                               future: devMode
                                   ? Future.value(_demoAlerts)
-                                  : getAlerts(widget.savedCities),
+                                  : getAlertsForTowns(widget.savedTowns),
                               builder: (context, snapshot) {
                                 switch (snapshot.connectionState) {
                                   case ConnectionState.done:
@@ -143,7 +143,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                       final alerts = snapshot.data!.toList();
                                       return AlertsPageView(
                                         pageController: _pageController,
-                                        cities: _cities,
+                                        towns: _towns,
                                         data: alerts,
                                         tabController: _tabController,
                                       );
@@ -168,17 +168,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _onAddCityButtonPressed(BuildContext context) async {
-    final addedCity = await Navigator.push<City>(
+    final addedTown = await Navigator.push<Town>(
         context,
         MaterialPageRoute(
           builder: (context) => const AddCityPage(),
         ));
-    if (addedCity != null) {
+    if (addedTown != null) {
       setState(() {
-        _cities.add(addedCity);
+        _towns.add(addedTown);
         //TODO: find better way from reinitalising tabController
         _tabController = TabController(
-            length: _cities.length,
+            length: _towns.length,
             vsync: this,
             animationDuration: const Duration(milliseconds: 100));
       });
@@ -186,11 +186,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _onRemoveCityButtonPressed(
-      BuildContext context, City city) async {
+      BuildContext context, Town town) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("${city.name} şehrini silmek istediğinize emin misiniz?"),
+        title: Text("${town.name} şehrini silmek istediğinize emin misiniz?"),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(true),
@@ -202,11 +202,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ),
     );
     if (result ?? false) {
-      await deleteCity(city);
+      await deleteTown(town);
       setState(() {
-        _cities.remove(city);
+        _towns.remove(town);
         //TODO: find better way from reinitalising tabController
-        _tabController = TabController(length: _cities.length, vsync: this);
+        _tabController = TabController(length: _towns.length, vsync: this);
       });
     }
   }
@@ -241,7 +241,9 @@ final _demoAlerts = [
       description: "deneme deneme",
       towns: {
         for (var i = 1; i < 81; i++)
-          Town(id: int.parse("9${_cityCodeFormat(i)}01"))
+          Town(
+              id: int.parse("9${_cityCodeFormat(i)}01"),
+              parentCity: const City(name: "testşehiri", centerId: "901001"))
       },
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now()),
@@ -252,7 +254,9 @@ final _demoAlerts = [
       description: "deneme deneme 123 123",
       towns: {
         for (var i = 1; i < 81; i++)
-          Town(id: int.parse("9${_cityCodeFormat(i)}01"))
+          Town(
+              id: int.parse("9${_cityCodeFormat(i)}01"),
+              parentCity: const City(name: "2. testşehiri", centerId: "902001"))
       },
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now())

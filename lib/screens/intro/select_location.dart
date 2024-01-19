@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meteo_uyari/themes.dart';
 import '../../classes/supabase.dart' as supabase;
 import '../../models/city.dart';
+import '../../models/town.dart';
 
 class SelectLocation extends StatelessWidget {
   final void Function(City city) onLocationSet;
@@ -41,9 +42,9 @@ class _SelectLocationLoaded extends StatefulWidget {
 
 class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
   City? _selectedCity;
+  Town? _selectedTown;
   late final _onLocationSet = widget.onLocationSet;
   late final _cities = widget.cities;
-  var _buttonAvailable = false;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,28 +54,33 @@ class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
           "Hava uyarılarını almak için bulunduğunuz yeri seçin",
           style: MyTextStyles.medium(),
         ),
+        //City Select
         DropdownMenu(
-          dropdownMenuEntries: _cities
-              .map((e) => DropdownMenuEntry(value: e.centerId, label: e.name))
-              .toList(),
-          onSelected: (index) {
-            if (index != null) {
-              _selectedCity =
-                  _cities.singleWhere((city) => city.centerId == index);
-              setState(() {
-                _buttonAvailable = true;
-              });
-            } else {
-              _selectedCity == null;
-              setState(() {
-                _buttonAvailable = false;
-              });
-            }
+          dropdownMenuEntries: [
+            for (final city in _cities)
+              DropdownMenuEntry(value: city, label: city.name)
+          ],
+          onSelected: (city) {
+            setState(() {
+              _selectedCity = city;
+            });
+          },
+        ),
+        //Town select
+        DropdownMenu(
+          dropdownMenuEntries: [
+            for (final town in _selectedCity?.towns ?? <Town>{})
+              DropdownMenuEntry(value: town, label: town.name!)
+          ],
+          enabled: _selectedCity != null,
+          onSelected: (value) {
+            _selectedTown = value;
           },
         ),
         ElevatedButton(
-            onPressed:
-                _buttonAvailable ? () => _onLocationSet(_selectedCity!) : null,
+            onPressed: _selectedTown != null && _selectedCity != null
+                ? () => _onLocationSet(_selectedCity!)
+                : null,
             child: const Text("Devam")),
       ],
     );

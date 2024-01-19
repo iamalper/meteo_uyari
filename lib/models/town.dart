@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 
+import 'city.dart';
+
 class Town {
   static final _formatter = NumberFormat("00");
   final String? name;
@@ -19,15 +21,18 @@ class Town {
   ///2 digit [cityCode]
   String get formattedCityCode => _formatter.format(cityCode);
 
-  Town({required this.id, this.name}) {
+  final City parentCity;
+
+  Town({required this.id, required this.parentCity, this.name}) {
     assert(id.toString().startsWith("9"));
     assert(id.toString().length == 5);
     assert(cityCode >= 0 && cityCode <= 81);
   }
   Town.fromMap(Map<String, dynamic> map)
-      : this(id: map["id"], name: map["name"]);
+      : this(id: map["id"], name: map["name"], parentCity: map["parentCity"]);
 
-  Map<String, dynamic> get map => {"id": id, "name": name};
+  Map<String, dynamic> get map =>
+      {"id": id, "name": name, "parentCity": parentCity.toMap};
 
   @override
   String toString() => "Name: $name, Id: $id";

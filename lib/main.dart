@@ -15,13 +15,13 @@ Future<void> main() async {
         options: DefaultFirebaseOptions.currentPlatform);
   } on UnsupportedError catch (_) {}
   await supabase.initSupabase();
-  final savedCities = await helpers.getSavedCities();
-  log("Loaded cities: $savedCities");
+  final savedTowns = await helpers.getSavedTowns();
+  log("Loaded cities: $savedTowns");
   await helpers.setNotificationChannel(
       "weatherAlerts", "Hava Durumu Uyarıları");
-  if (savedCities.isEmpty) {
+  if (savedTowns.isEmpty) {
     runApp(const Intro());
   } else {
-    runApp(MainScreen(savedCities: savedCities));
+    runApp(MainScreen(savedTowns: savedTowns));
   }
 }

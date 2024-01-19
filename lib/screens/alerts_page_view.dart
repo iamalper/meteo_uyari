@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/models/alert.dart';
-import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/alerts_page.dart';
 
 import '../models/town.dart';
@@ -11,12 +10,12 @@ class AlertsPageView extends StatefulWidget {
   const AlertsPageView(
       {super.key,
       required this.pageController,
-      required this.cities,
+      required this.towns,
       required this.data,
       required this.tabController});
 
   final PageController pageController;
-  final Set<City> cities;
+  final Set<Town> towns;
   final List<Alert> data;
   final TabController tabController;
 
@@ -26,7 +25,7 @@ class AlertsPageView extends StatefulWidget {
 
 class _AlertsPageViewState extends State<AlertsPageView> {
   late final _pageController = widget.pageController;
-  late final _cities = widget.cities;
+  late final _towns = widget.towns;
   late final _allAlerts = widget.data;
   late final _tabController = widget.tabController;
   late var _pagePosition = _pageController.initialPage.toDouble();
@@ -48,7 +47,7 @@ class _AlertsPageViewState extends State<AlertsPageView> {
     return PageView.builder(
       controller: _pageController,
       physics: const BouncingScrollPhysics(),
-      itemCount: _cities.length,
+      itemCount: _towns.length,
       //findChildIndexCallback: (key) => (key as ValueKey<int>).value,
       itemBuilder: (context, index) => Transform.translate(
         offset: Offset(0, (_pagePosition - index).abs() * _screenSizeY),
@@ -56,11 +55,11 @@ class _AlertsPageViewState extends State<AlertsPageView> {
           opacity: 1 -
               (_pagePosition - index).abs(), //FIXME: Opaque may out of range
           child: AlertsPage(
-            alerts: _allAlerts
-                .where((element) => element.towns
-                    .contains(Town(id: _cities.elementAt(index).centerIdInt)))
-                .toList(),
-            cityName: _cities.elementAt(index).name,
+            alerts: [
+              for (final alert in _allAlerts)
+                if (alert.towns.contains(_towns.elementAt(index))) alert
+            ],
+            cityName: _towns.elementAt(index).name!,
             //key: ValueKey(index),
           ),
         ),

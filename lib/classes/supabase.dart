@@ -10,6 +10,7 @@ import "dart:io";
 
 import "package:meteo_uyari/models/alert.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
+import "../models/town.dart";
 import 'messagging.dart';
 
 import "../models/city.dart";
@@ -18,6 +19,7 @@ import "exceptions.dart";
 ///Get iteratable of [Alert]'s from Supabase Database
 ///
 ///Throws [NetworkException] if can't connect.
+@Deprecated("App no longer use cities, use getAlertsForTowns instead")
 Future<Iterable<Alert>> getAlerts(Iterable<City> cities) async {
   final Iterable<Alert> result;
   try {
@@ -26,6 +28,24 @@ Future<Iterable<Alert>> getAlerts(Iterable<City> cities) async {
         .from("alerts")
         .select()
         .contains("towns", cities.map((e) => e.centerId).toList())
+        .withConverter((data) => data.map((e) => Alert.fromMap(e)));
+  } on SocketException catch (_) {
+    throw const NetworkException();
+  }
+  return result;
+}
+
+///Get iteratable of [Alert]'s from Supabase Database
+///
+///Throws [NetworkException] if can't connect.
+Future<Iterable<Alert>> getAlertsForTowns(Set<Town> towns) async {
+  final Iterable<Alert> result;
+  try {
+    await initSupabase();
+    result = await Supabase.instance.client
+        .from("alerts")
+        .select()
+        .contains("towns", towns) //TODO: Test this for set !!
         .withConverter((data) => data.map((e) => Alert.fromMap(e)));
   } on SocketException catch (_) {
     throw const NetworkException();
@@ -78,4 +98,21 @@ Future<List<City>> getCities() async {
   final json = response.data as List<dynamic>;
   final cities = json.map((e) => City.fromMap(e)).toList();
   return cities;
+}
+
+Future<List<Town>> getTowns(City? city) async {
+  throw UnimplementedError();
+  // ignore: dead_code
+  await initSupabase();
+  final response = await Supabase.instance.client.functions
+      .invoke("get_towns", method: HttpMethod.get, body: {
+    if (city != null) ...{"city": city.toMap}
+  });
+  if (response.status != 200) {
+    log("Towns request status code ${response.status}");
+    throw const NetworkException();
+  }
+  final json = response.data as List<dynamic>;
+  final towns = [for (final map in json) Town.fromMap(map)];
+  return towns;
 }
