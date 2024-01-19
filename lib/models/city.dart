@@ -24,7 +24,7 @@ class City {
       : this(
             centerId: map["centerId"],
             name: map["name"],
-            towns: {for (final town in map["towns"]) Town.fromMap(town)});
+            towns: {for (final town in map["towns"] ?? {}) Town.fromMap(town)});
 
   ///[centerId] as [int] value for comparing with any [Alert] object
   int get centerIdInt => int.parse(centerId);

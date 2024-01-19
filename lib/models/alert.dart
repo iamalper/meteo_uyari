@@ -60,7 +60,6 @@ class Alert {
         hadise = Hadise.values.singleWhere((element) =>
             element.name == map["hadise"] || element.baslik == map["hadise"]),
         description = map["description"],
-        //towns = {for (final townId in map["towns"]) Town(id: townId)},
         towns = switch (map["town"]) {
           String towns => {
               for (final town in towns.split(",")) Town(id: int.parse(town))
