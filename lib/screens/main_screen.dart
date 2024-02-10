@@ -243,7 +243,7 @@ final _demoAlerts = [
         for (var i = 1; i < 81; i++)
           Town(
               id: int.parse("9${_cityCodeFormat(i)}01"),
-              parentCity: const City(name: "testşehiri", centerId: "901001"),
+              parentCity: const City(name: "testşehiri", id: "901001"),
               name: "Test bölgesi")
       },
       beginTime: FormattedDateTime.now(),
@@ -257,7 +257,7 @@ final _demoAlerts = [
         for (var i = 1; i < 81; i++)
           Town(
               id: int.parse("9${_cityCodeFormat(i)}01"),
-              parentCity: const City(name: "2. testşehiri", centerId: "902001"),
+              parentCity: const City(name: "2. testşehiri", id: "902001"),
               name: "Test bölgesi 2")
       },
       beginTime: FormattedDateTime.now(),

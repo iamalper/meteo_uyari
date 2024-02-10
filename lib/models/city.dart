@@ -8,7 +8,7 @@ class City {
   ///The towns which belongs to [City].
   ///
   ///Not yet implemented.
-  final Set<Town> towns;
+  final Set<Town>? towns;
 
   ///Unique for all Cities.
   ///
@@ -16,24 +16,25 @@ class City {
   ///
   ///[Alert.towns] contains this value as [int],
   ///for comparing use [City.centerIdInt]
-  final String centerId;
-  const City(
-      {required this.name, this.towns = const {}, required this.centerId});
+  final String id;
+  const City({required this.name, this.towns, required this.id});
 
   City.fromMap(Map<String, dynamic> map)
       : this(
-            centerId: map["centerId"],
+            id: map["id"].toString(),
             name: map["name"],
-            towns: {for (final town in map["towns"]!) Town.fromMap(town)});
+            towns: map["towns"] == null
+                ? null
+                : {for (final town in map["towns"]) Town.fromMap(town)});
 
-  ///[centerId] as [int] value for comparing with any [Alert] object
-  int get centerIdInt => int.parse(centerId);
+  ///[id] as [int] value for comparing with any [Alert] object
+  int get centerIdInt => int.parse(id);
   Map<String, dynamic> get toMap =>
-      {"centerId": centerId, "name": name, "towns": towns.toList()};
+      {"centerId": id, "name": name, "towns": towns?.toList()};
   @override
-  String toString() => "Name: $name, towns: $towns, centerId: $centerId";
+  String toString() => "Name: $name, towns: $towns, centerId: $id";
   @override
-  int get hashCode => centerId.hashCode;
+  int get hashCode => id.hashCode;
 
   @override
   bool operator ==(Object other) {

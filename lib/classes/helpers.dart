@@ -41,7 +41,7 @@ Future<void> setNotificationChannel(
 Future<bool> setNotificationForNewCity(City city) async {
   final result = await messaging.setup(city);
   if (result) {
-    await _savedCitiesCollection.doc(city.centerId).set(city.toMap);
+    await _savedCitiesCollection.doc(city.id).set(city.toMap);
     log("Notifications set for: $city", name: "Helpers");
   } else {
     log("Notification permission denied.", name: "Helpers");
@@ -96,7 +96,7 @@ final buildType = switch (const String.fromEnvironment("buildType")) {
 @Deprecated("App no longer use cities. Use deleteTown instead")
 Future<void> deleteCity(City city) async {
   await Future.wait([
-    _savedCitiesCollection.doc(city.centerId).delete(),
+    _savedCitiesCollection.doc(city.id).delete(),
     messaging.unsubscribeFromCity(city)
   ]);
   log("$city removed", name: "Helpers");
