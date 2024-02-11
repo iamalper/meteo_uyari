@@ -1,21 +1,36 @@
 import 'town.dart';
+import 'alert.dart';
 
 class City {
+  ///City's name. It can be shown to user.
   final String name;
-  List<Town>? towns;
+
+  ///The towns which belongs to [City].
+  final Set<Town> towns;
 
   ///Unique for all Cities.
-  final String centerId;
-  City({required this.name, this.towns, required this.centerId});
-  City.fromMap(Map<String, dynamic> map)
-      : centerId = map["centerId"],
-        name = map["name"];
+  ///
+  ///It's center town for MeteoUyari api and returns as a [String].
+  ///
+  ///[Alert.towns] contains this value as [int],
+  ///for comparing use [City.centerIdInt]
+  final String id;
+  const City({required this.name, required this.towns, required this.id});
 
-  Map<String, dynamic> get toMap => {"centerId": centerId, "name": name};
+  City.fromMap(Map<String, dynamic> map)
+      : this(
+            id: map["id"].toString(),
+            name: map["name"],
+            towns: {for (final town in map["towns"]) Town.fromMap(town)});
+
+  ///[id] as [int] value for comparing with any [Alert] object
+  int get centerIdInt => int.parse(id);
+  Map<String, dynamic> get toMap =>
+      {"centerId": id, "name": name, "towns": towns.toList()};
   @override
-  String toString() => "Name: $name, towns: $towns, centerId: $centerId";
+  String toString() => "Name: $name, towns: $towns, centerId: $id";
   @override
-  int get hashCode => centerId.hashCode;
+  int get hashCode => id.hashCode;
 
   @override
   bool operator ==(Object other) {

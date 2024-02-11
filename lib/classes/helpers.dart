@@ -1,32 +1,71 @@
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import '../models/town.dart';
 import 'messagging.dart' as messaging;
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/city.dart';
+import 'package:localstore/localstore.dart';
 
-///Saves [city],and registers pusn notifications for [city]
+final _db = Localstore.instance;
+
+final _savedTownsCollection = _db.collection("savedTowns");
+
+const _platform = MethodChannel("meteo-uyari");
+
+///Set a Notification Channel for Android.
 ///
-///Returns [false] if notification permission can't granted.
-Future<bool> setNotifications(City city) async {
-  final sp = await SharedPreferences.getInstance();
-  await sp.setString("savedCityId", city.centerId);
-  await sp.setString("savedCityName", city.name);
-  final result = await messaging.setup(city);
+///After channel set, some details can't be changed, user should reinstall the app.
+///
+///It is required for getting notifications foreground.
+Future<void> setNotificationChannel(
+    String channelId, String channelName) async {
+  try {
+    await _platform.invokeMethod<void>(
+        "initChannel", {"channelId": channelId, "channelName": channelName});
+  } on MissingPluginException catch (_) {
+    //This platform method implemented only for android
+    //App executes this in standart workflow.
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      rethrow;
+    }
+  }
+}
+
+Future<bool> setNotificationForNewTown(Town town) async {
+  final result = await messaging.setupForTown(town);
   if (result) {
-    log("Notifications set for: $city", name: "Backend");
+    await _savedTownsCollection.doc(town.id.toString()).set(town.map);
+    log("Notifications set for: $town", name: "Helpers");
   } else {
-    log("Notification permission denied.", name: "Backend");
+    log("Notification permission denied.", name: "Helpers");
   }
   return result;
 }
 
-Future<City?> getSavedCity() async {
-  final sp = await SharedPreferences.getInstance();
-  final cityId = sp.getString("savedCityId");
-  final cityName = sp.getString("savedCityName");
-  if (cityName == null || cityId == null) {
-    return null;
-  } else {
-    final savedCity = City(centerId: cityId, name: cityName);
-    return savedCity;
-  }
+///Get all saved [Town] objects with [Localstore]
+///
+///Returns empty [Set] if no [Town] saved with [setNotificationForNewTown()]
+Future<Set<Town>> getSavedTowns() async {
+  final townMaps = await _savedTownsCollection.get();
+  final towns = {
+    for (final cityMap in townMaps?.values ?? []) Town.fromMap(cityMap)
+  };
+  return towns;
+}
+
+enum MyBuildType { unknown, alpha, beta, stable }
+
+final buildType = switch (const String.fromEnvironment("buildType")) {
+  "alpha" => MyBuildType.alpha,
+  "beta" => MyBuildType.beta,
+  "stable" => MyBuildType.stable,
+  _ => MyBuildType.unknown
+};
+
+///Deletes previously saved [town] and unsubscribes from [town] notifications
+Future<void> deleteTown(Town town) async {
+  await Future.wait([
+    _savedTownsCollection.doc(town.id.toString()).delete(),
+    messaging.unsubscribeFromTown(town)
+  ]);
+  log("$town removed", name: "Helpers");
 }

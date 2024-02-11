@@ -1,31 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:meteo_uyari/models/alert.dart';
+import 'package:meteo_uyari/themes.dart';
 
 class AlertsIntro extends StatelessWidget {
-  final void Function() onContiune;
-  const AlertsIntro({super.key, required this.onContiune});
+  final void Function() onContinue;
+  const AlertsIntro({super.key, required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        const Text("Şu durumlarda uyarı alacaksınız"),
-        const Text("""
-          Soğuk Hava Dalgası
-          Sıcak Hava Dalgası
-          Sis
-          Zirai Don
-          Buzlanma ve Don
-          Toz Taşınımı
-          Kar Erimesi
-          Çığ
-          Kar
-          Gökgürültülü Sağanak Yağış (Yıldırım, Dolu, Hortum)
-          Kuvvetli Rüzgar ve Fırtına
-          Yağmur/Sağanak
-            """),
-        const Text("Bunu daha sonra değiştirebileceksiniz"),
-        ElevatedButton(onPressed: onContiune, child: const Text("Devam"))
+        const Text(
+          "Şu durumlarda uyarı alacaksınız",
+          style: MyTextStyles.medium(),
+        ),
+        ...Hadise.values
+            .map((e) => Text(e.baslik, style: const MyTextStyles.small())),
+        const Text("Bunu daha sonra değiştirebileceksiniz",
+            style: MyTextStyles.medium()),
+        ElevatedButton(
+            onPressed: onContinue,
+            child: const Text("Devam", style: MyTextStyles.medium()))
       ],
     );
   }

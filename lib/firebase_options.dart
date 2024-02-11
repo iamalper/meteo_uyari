@@ -54,9 +54,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBenfGvHDfnPXTuiZWpI-5z_gWla9VqDbk',
-    appId: '1:634582251950:android:13e7a8203b48d82ca3703f',
+    appId: '1:634582251950:android:f6e847387ad3b97fa3703f',
     messagingSenderId: '634582251950',
     projectId: 'meteouyari',
     storageBucket: 'meteouyari.appspot.com',
   );
+
 }

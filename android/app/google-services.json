@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:634582251950:android:13e7a8203b48d82ca3703f",
+        "mobilesdk_app_id": "1:634582251950:android:f6e847387ad3b97fa3703f",
         "android_client_info": {
-          "package_name": "com.example.meteo_uyari"
+          "package_name": "com.alper.meteo_uyari"
         }
       },
       "oauth_client": [

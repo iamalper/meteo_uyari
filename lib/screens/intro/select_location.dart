@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
-import '../../classes/get_cities.dart';
+import 'package:meteo_uyari/themes.dart';
+import '../../classes/supabase.dart' as supabase;
 import '../../models/city.dart';
+import '../../models/town.dart';
 
 class SelectLocation extends StatelessWidget {
-  final void Function(City city) onLocationSet;
+  final void Function(Town town) onLocationSet;
 
   const SelectLocation({super.key, required this.onLocationSet});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getCities(),
+        future: supabase.getCitiesRpc(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return SelectLocationLoaded(
+            final error = snapshot.error;
+            if (error != null) {
+              throw error;
+            }
+            return _SelectLocationLoaded(
               cities: snapshot.data!,
               onLocationSet: onLocationSet,
             );
@@ -24,47 +30,58 @@ class SelectLocation extends StatelessWidget {
   }
 }
 
-class SelectLocationLoaded extends StatefulWidget {
-  final void Function(City city) onLocationSet;
+class _SelectLocationLoaded extends StatefulWidget {
+  final void Function(Town town) onLocationSet;
   final List<City> cities;
-  const SelectLocationLoaded(
-      {super.key, required this.cities, required this.onLocationSet});
+  const _SelectLocationLoaded(
+      {required this.cities, required this.onLocationSet});
 
   @override
-  State<SelectLocationLoaded> createState() => _SelectLocationLoadedState();
+  State<_SelectLocationLoaded> createState() => _SelectLocationLoadedState();
 }
 
-class _SelectLocationLoadedState extends State<SelectLocationLoaded> {
-  City? selectedCity;
-  bool buttonAvailable = false;
+class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
+  City? _selectedCity;
+  Town? _selectedTown;
+  late final _onLocationSet = widget.onLocationSet;
+  late final _cities = widget.cities;
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        const Text("Hava uyarılarını almak için bulunduğunuz yeri seçin"),
+        const Text(
+          "Hava uyarılarını almak için bulunduğunuz yeri seçin",
+          style: MyTextStyles.medium(),
+        ),
+        //City Select
         DropdownMenu(
-          dropdownMenuEntries: widget.cities
-              .map((e) => DropdownMenuEntry(value: e.centerId, label: e.name))
-              .toList(),
-          onSelected: (index) {
-            if (index != null) {
-              selectedCity =
-                  widget.cities.singleWhere((city) => city.centerId == index);
-              setState(() {
-                buttonAvailable = true;
-              });
-            } else {
-              selectedCity == null;
-              setState(() {
-                buttonAvailable = false;
-              });
-            }
+          dropdownMenuEntries: [
+            for (final city in _cities)
+              DropdownMenuEntry(value: city, label: city.name)
+          ],
+          onSelected: (city) {
+            setState(() {
+              _selectedCity = city;
+            });
+          },
+        ),
+        //Town select
+        DropdownMenu(
+          dropdownMenuEntries: [
+            for (final town in _selectedCity?.towns ?? <Town>{})
+              DropdownMenuEntry(value: town, label: town.name)
+          ],
+          enabled: _selectedCity != null,
+          onSelected: (value) {
+            setState(() {
+              _selectedTown = value;
+            });
           },
         ),
         ElevatedButton(
-            onPressed: buttonAvailable
-                ? () => widget.onLocationSet(selectedCity!)
+            onPressed: _selectedTown != null
+                ? () => _onLocationSet(_selectedTown!)
                 : null,
             child: const Text("Devam")),
       ],

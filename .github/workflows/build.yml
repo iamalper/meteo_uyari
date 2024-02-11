@@ -2,17 +2,19 @@ name: BuildTask
 
 on:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - docs/**
-      - screenshots**
-      - test/**
-      - LICENSE
-      - README.md
-      - GitVersion.yml
-      - .vscode/**
-      - .github/**
-      - whatsnew/*
+    inputs:
+      build_type:
+        type: choice
+        description: "Build type for app"
+        options:
+          - alpha
+          - beta
+          - stable
+        required: true
+      publish:
+        type: boolean
+        description: "Wheter publish to Google Play after build."
+        default: false
 
 jobs:
   build_android:
@@ -70,10 +72,10 @@ jobs:
         run: flutter test
   
       - name: Start appbundle build
-        run: flutter build appbundle
+        run: flutter build appbundle --dart-define=buildType=${{ github.event.inputs.build_type }}
         
       - name: Start apk build
-        run: flutter build apk
+        run: flutter build apk --dart-define=buildType=${{ github.event.inputs.build_type }}
 
       - name: Uploading android packages
         uses: actions/upload-artifact@v2
@@ -113,13 +115,12 @@ jobs:
       - name: Releasing builds
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
-          automatic_release_tag: "v${{ steps.version.outputs.content }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
           prerelease: ${{ env.isRelease == 'false' }}
           files: | 
             flutter-apk/app-release.apk
             bundle/release/app-release.aab
-            *.deb
 
   version:
     name: Create version number
@@ -149,8 +150,6 @@ jobs:
 
   google_play_publish:
     runs-on: ubuntu-latest
-    #if: ${{ github.ref_name == 'main' }}
-    if: false
     needs: [release]
     steps:
     - uses: actions/checkout@v2
@@ -159,11 +158,23 @@ jobs:
       with: 
          name: builds
 
-    - name: Publishing
+    - name: Publish internal testing
+      if:  ${{github.event.inputs.build_type == 'alpha'}}
       uses: r0adkll/upload-google-play@v1
       with:
-        serviceAccountJsonPlainText: #${{ secrets.PLAY_SERVICE_ACCOUNT }}
-        packageName: com.alper.weepy
+        serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+        packageName: com.alper.meteo_uyari
+        releaseFiles: bundle/release/app-release.aab
+        track: internal
+        status: draft
+        changesNotSentForReview: false
+
+    - name: Publish closed test
+      if: ${{github.event.inputs.build_type == 'beta'}}
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+        packageName: com.alper.meteo_uyari
         releaseFiles: bundle/release/app-release.aab
         track: beta
-        whatsNewDirectory: whatsnew
+  
