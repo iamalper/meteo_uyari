@@ -16,7 +16,7 @@ Future<void> main() async {
   } on UnsupportedError catch (_) {}
   await supabase.initSupabase();
   final savedTowns = await helpers.getSavedTowns();
-  log("Loaded cities: $savedTowns");
+  log("Loaded towns: $savedTowns");
   await helpers.setNotificationChannel(
       "weatherAlerts", "Hava Durumu Uyarıları");
   if (savedTowns.isEmpty) {

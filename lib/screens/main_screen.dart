@@ -1,19 +1,18 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/classes/helpers.dart';
 import 'package:meteo_uyari/screens/add_city.dart';
 import 'package:meteo_uyari/screens/alerts_page_view.dart';
+import 'package:meteo_uyari/screens/appbar_popup.dart';
 import 'package:meteo_uyari/screens/debug_info_page.dart';
 import '../classes/messagging.dart';
 import '../classes/supabase.dart';
-import '../models/alert.dart';
-import '../models/formatted_datetime.dart';
 import '../models/town.dart';
 import '../view_models/warning_containter.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import '../themes.dart' as my_themes;
+import 'demo_alerts.dart';
 
 class MainScreen extends StatefulWidget {
   ///It should not be empty list
@@ -72,7 +71,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       }),
                 ]),
                 appBar: AppBar(
-                  title: Text("Meteo Uyarı (${buildType.name})"),
+                  title: InkWell(
+                    onTap: buildType == MyBuildType.stable
+                        ? null
+                        : () => showDialog(
+                              context: context,
+                              builder: (context) => appBarPopUp,
+                            ),
+                    child: Text(buildType == MyBuildType.stable
+                        ? "Meteo Uyarı"
+                        : "Meteo Uyarı (${buildType.name})"),
+                  ),
                   actions: [
                     IconButton(
                       onPressed: () => setState(() {}),
@@ -128,7 +137,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           padding: const EdgeInsetsDirectional.all(10),
                           child: FutureBuilder(
                               future: devMode
-                                  ? Future.value(_demoAlerts)
+                                  ? Future.value(demoAlerts)
                                   : Future(() async => [
                                         for (final town in _towns)
                                           ...await getAlertsRpc(
@@ -230,34 +239,3 @@ class _AppScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.trackpad,
       };
 }
-
-String _cityCodeFormat(int cityCode) {
-  final formatter = NumberFormat("00");
-  return formatter.format(cityCode);
-}
-
-final _demoAlerts = [
-  Alert(
-      no: "230134",
-      severity: Severity.orange,
-      hadise: Hadise.hot,
-      description: "deneme deneme",
-      towns: {
-        for (var i = 1; i < 81; i++)
-          Town(id: int.parse("9${_cityCodeFormat(i)}01"), name: "Test bölgesi")
-      },
-      beginTime: FormattedDateTime.now(),
-      endTime: FormattedDateTime.now()),
-  Alert(
-      no: "230134",
-      severity: Severity.red,
-      hadise: Hadise.wind,
-      description: "deneme deneme 123 123",
-      towns: {
-        for (var i = 1; i < 81; i++)
-          Town(
-              id: int.parse("9${_cityCodeFormat(i)}01"), name: "Test bölgesi 2")
-      },
-      beginTime: FormattedDateTime.now(),
-      endTime: FormattedDateTime.now())
-];
