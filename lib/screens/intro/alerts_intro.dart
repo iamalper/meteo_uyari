@@ -3,8 +3,8 @@ import 'package:meteo_uyari/models/alert.dart';
 import 'package:meteo_uyari/themes.dart';
 
 class AlertsIntro extends StatelessWidget {
-  final void Function() onContiune;
-  const AlertsIntro({super.key, required this.onContiune});
+  final void Function() onContinue;
+  const AlertsIntro({super.key, required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class AlertsIntro extends StatelessWidget {
         const Text("Bunu daha sonra değiştirebileceksiniz",
             style: MyTextStyles.medium()),
         ElevatedButton(
-            onPressed: onContiune,
+            onPressed: onContinue,
             child: const Text("Devam", style: MyTextStyles.medium()))
       ],
     );

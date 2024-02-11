@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/classes/helpers.dart' as helpers;
 import 'package:meteo_uyari/main.dart';
+import 'package:meteo_uyari/models/town.dart';
 import 'warnings.dart';
-import '../../models/city.dart';
 import 'select_location.dart';
 import 'alerts_intro.dart';
 import '../../themes.dart' as my_themes;
@@ -18,7 +18,7 @@ class _IntroState extends State<Intro> {
   final _controller = PageController();
   void _gotoPage(int index) => _controller.animateToPage(index,
       duration: const Duration(milliseconds: 200), curve: Curves.linear);
-  City? _city;
+  Town? _town;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,17 +33,17 @@ class _IntroState extends State<Intro> {
               physics: const NeverScrollableScrollPhysics(),
               children: [
                 SelectLocation(
-                  onLocationSet: (city) {
-                    _city = city;
+                  onLocationSet: (town) {
+                    _town = town;
                     _gotoPage(1);
                   },
                 ),
                 AlertsIntro(
-                  onContiune: () => _gotoPage(2),
+                  onContinue: () => _gotoPage(2),
                 ),
                 Warnings(
-                  onContiune: () async {
-                    await helpers.setNotificationForNewCity(_city!);
+                  onContinue: () async {
+                    await helpers.setNotificationForNewTown(_town!);
                     await main();
                   },
                 ),

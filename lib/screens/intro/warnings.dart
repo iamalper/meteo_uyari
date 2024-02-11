@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:meteo_uyari/themes.dart';
 
 class Warnings extends StatelessWidget {
-  final void Function() onContiune;
-  const Warnings({super.key, required this.onContiune});
+  final void Function() onContinue;
+  const Warnings({super.key, required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class Warnings extends StatelessWidget {
             "Uyarılar bilgilendirme amaçlıdır. Bu uygulama ve geliştiricileri, sunulan  doğruluğunu ve zamanında ulaşacağını garanti edemez.",
             style: MyTextStyles.medium()),
         ElevatedButton(
-          onPressed: onContiune,
+          onPressed: onContinue,
           child: const Text("Tamam", style: MyTextStyles.medium()),
         ),
       ],

@@ -8,7 +8,6 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:meteo_uyari/models/alert.dart';
-import '../models/city.dart';
 import '../models/town.dart';
 
 ///Get default [FirebaseMessaging] instance
@@ -35,31 +34,6 @@ final onForegroundAlert = FirebaseMessaging.onMessage
 ///Returns [null] in unsupported platforms
 Future<String?> getFcmToken() async => _messaging?.getToken();
 
-///Setup push notifications for [city] and it's towns.
-///
-///Returns [false] if permission denied by user.
-///
-///For unsupported platforms, skips setup, returns [true].
-@Deprecated("App no longer use cities. Use setupForTown instead")
-Future<bool> setup(City city) async {
-  final messaging = _messaging;
-  if (messaging == null) return true;
-  final result = await getPermission();
-  if (result) {
-    final towns = city.towns;
-    final futures = {
-      messaging.subscribeToTopic(city.id.toString()),
-      if (towns != null) ...{
-        for (final town in towns) messaging.subscribeToTopic(town.id.toString())
-      }
-    };
-    await Future.wait(futures);
-    return true;
-  } else {
-    return false;
-  }
-}
-
 ///Setup push notifications for [town].
 ///
 ///Returns [false] if permission denied by user.
@@ -74,26 +48,6 @@ Future<bool> setupForTown(Town town) async {
     return true;
   } else {
     return false;
-  }
-}
-
-///Unsubscribe from push notifications for [city] and it's towns.
-///
-///It has no effect if wasn't subscribed to [city] or calling
-///from unsupported platforms.
-@Deprecated("App no longer use cities. Use unsubscribeFromTown instead")
-Future<void> unsubscribeFromCity(City city) async {
-  final messaging = _messaging;
-  if (messaging != null) {
-    final towns = city.towns;
-    final futures = {
-      messaging.unsubscribeFromTopic(city.id),
-      if (towns != null) ...{
-        for (final town in towns)
-          messaging.unsubscribeFromTopic(town.id.toString())
-      }
-    };
-    await Future.wait(futures);
   }
 }
 

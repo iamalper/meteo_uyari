@@ -6,9 +6,7 @@ class City {
   final String name;
 
   ///The towns which belongs to [City].
-  ///
-  ///Not yet implemented.
-  final Set<Town>? towns;
+  final Set<Town> towns;
 
   ///Unique for all Cities.
   ///
@@ -17,20 +15,18 @@ class City {
   ///[Alert.towns] contains this value as [int],
   ///for comparing use [City.centerIdInt]
   final String id;
-  const City({required this.name, this.towns, required this.id});
+  const City({required this.name, required this.towns, required this.id});
 
   City.fromMap(Map<String, dynamic> map)
       : this(
             id: map["id"].toString(),
             name: map["name"],
-            towns: map["towns"] == null
-                ? null
-                : {for (final town in map["towns"]) Town.fromMap(town)});
+            towns: {for (final town in map["towns"]) Town.fromMap(town)});
 
   ///[id] as [int] value for comparing with any [Alert] object
   int get centerIdInt => int.parse(id);
   Map<String, dynamic> get toMap =>
-      {"centerId": id, "name": name, "towns": towns?.toList()};
+      {"centerId": id, "name": name, "towns": towns.toList()};
   @override
   String toString() => "Name: $name, towns: $towns, centerId: $id";
   @override

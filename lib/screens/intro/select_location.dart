@@ -5,14 +5,14 @@ import '../../models/city.dart';
 import '../../models/town.dart';
 
 class SelectLocation extends StatelessWidget {
-  final void Function(City city) onLocationSet;
+  final void Function(Town town) onLocationSet;
 
   const SelectLocation({super.key, required this.onLocationSet});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: supabase.getCities(),
+        future: supabase.getCitiesRpc(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             final error = snapshot.error;
@@ -31,7 +31,7 @@ class SelectLocation extends StatelessWidget {
 }
 
 class _SelectLocationLoaded extends StatefulWidget {
-  final void Function(City city) onLocationSet;
+  final void Function(Town town) onLocationSet;
   final List<City> cities;
   const _SelectLocationLoaded(
       {required this.cities, required this.onLocationSet});
@@ -74,12 +74,14 @@ class _SelectLocationLoadedState extends State<_SelectLocationLoaded> {
           ],
           enabled: _selectedCity != null,
           onSelected: (value) {
-            _selectedTown = value;
+            setState(() {
+              _selectedTown = value;
+            });
           },
         ),
         ElevatedButton(
-            onPressed: _selectedTown != null && _selectedCity != null
-                ? () => _onLocationSet(_selectedCity!)
+            onPressed: _selectedTown != null
+                ? () => _onLocationSet(_selectedTown!)
                 : null,
             child: const Text("Devam")),
       ],

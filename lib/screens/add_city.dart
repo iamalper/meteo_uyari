@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/classes/helpers.dart';
+import 'package:meteo_uyari/models/city.dart';
 import '../classes/supabase.dart' as supabase;
 import '../models/town.dart';
 
@@ -21,7 +22,7 @@ class AddTownPage extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Center(
             child: FutureBuilder(
-                future: supabase.getTowns(),
+                future: supabase.getCitiesRpc(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     final error = snapshot.error;
@@ -32,14 +33,9 @@ class AddTownPage extends StatelessWidget {
                         throw error;
                       }
                     }
-                    final towns = snapshot.data!;
-                    if (existingTowns != null) {
-                      for (final savedCity in existingTowns!) {
-                        towns.remove(savedCity);
-                      }
-                    }
-                    return _AddTownLoaded(
-                      towns: towns,
+                    final cities = snapshot.data!;
+                    return _AddCityLoaded(
+                      cities: cities,
                     );
                   } else {
                     return const CircularProgressIndicator();
@@ -50,25 +46,43 @@ class AddTownPage extends StatelessWidget {
   }
 }
 
-class _AddTownLoaded extends StatefulWidget {
-  final List<Town> towns;
-  const _AddTownLoaded({required this.towns});
+class _AddCityLoaded extends StatefulWidget {
+  final List<City> cities;
+  const _AddCityLoaded({required this.cities});
 
   @override
-  State<_AddTownLoaded> createState() => _AddTownLoadedState();
+  State<_AddCityLoaded> createState() => _AddCityLoadedState();
 }
 
-class _AddTownLoadedState extends State<_AddTownLoaded> {
+class _AddCityLoadedState extends State<_AddCityLoaded> {
+  late final allCities = widget.cities;
   Town? selectedTown;
+  City? selectedCity;
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const Text("Yer seçin"),
+        //City selector
         DropdownMenu(
           dropdownMenuEntries: [
-            for (final town in widget.towns)
+            for (final city in allCities)
+              DropdownMenuEntry(value: city, label: city.name)
+          ],
+          onSelected: (value) {
+            if (value != null) {
+              setState(() {
+                selectedCity = value;
+              });
+            }
+          },
+        ),
+        //Town selector
+        DropdownMenu(
+          enabled: selectedCity != null,
+          dropdownMenuEntries: [
+            for (final town in selectedCity?.towns ?? <Town>[])
               DropdownMenuEntry(value: town, label: town.name)
           ],
           onSelected: (value) {

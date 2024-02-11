@@ -13,10 +13,6 @@ void main() {
 
   final allCityCodes = {for (int i = 0; i <= 81; i++) 90001 + (i * 100)};
   final cityCodeVariant = ValueVariant(allCityCodes);
-  testWidgets("Get towns for cities", (_) async {
-    final citiesFuture = supabase.getTowns();
-    await expectLater(citiesFuture, completes);
-  }, skip: true);
 
   testWidgets("Get alerts for towns", (_) async {
     final alerts =

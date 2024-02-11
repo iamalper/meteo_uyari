@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meteo_uyari/classes/exceptions.dart';
 import 'package:meteo_uyari/classes/helpers.dart';
-import 'package:meteo_uyari/models/city.dart';
 import 'package:meteo_uyari/screens/add_city.dart';
 import 'package:meteo_uyari/screens/alerts_page_view.dart';
 import 'package:meteo_uyari/screens/debug_info_page.dart';
@@ -130,7 +129,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           child: FutureBuilder(
                               future: devMode
                                   ? Future.value(_demoAlerts)
-                                  : getAlertsForTowns(widget.savedTowns),
+                                  : Future(() async => [
+                                        for (final town in _towns)
+                                          ...await getAlertsRpc(
+                                              town.id.toString())
+                                      ]),
                               builder: (context, snapshot) {
                                 switch (snapshot.connectionState) {
                                   case ConnectionState.done:
@@ -140,7 +143,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     } else if (error != null) {
                                       throw error;
                                     } else {
-                                      final alerts = snapshot.data!.toList();
+                                      final alerts = snapshot.data!;
                                       return AlertsPageView(
                                         pageController: _pageController,
                                         towns: _towns,
@@ -241,10 +244,7 @@ final _demoAlerts = [
       description: "deneme deneme",
       towns: {
         for (var i = 1; i < 81; i++)
-          Town(
-              id: int.parse("9${_cityCodeFormat(i)}01"),
-              parentCity: const City(name: "testşehiri", id: "901001"),
-              name: "Test bölgesi")
+          Town(id: int.parse("9${_cityCodeFormat(i)}01"), name: "Test bölgesi")
       },
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now()),
@@ -256,9 +256,7 @@ final _demoAlerts = [
       towns: {
         for (var i = 1; i < 81; i++)
           Town(
-              id: int.parse("9${_cityCodeFormat(i)}01"),
-              parentCity: const City(name: "2. testşehiri", id: "902001"),
-              name: "Test bölgesi 2")
+              id: int.parse("9${_cityCodeFormat(i)}01"), name: "Test bölgesi 2")
       },
       beginTime: FormattedDateTime.now(),
       endTime: FormattedDateTime.now())
