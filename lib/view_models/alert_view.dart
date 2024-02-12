@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:meteo_uyari/models/alert.dart';
 import 'package:meteo_uyari/themes.dart';
 
+import '../classes/assets.dart';
+
 class AlertBoxView extends StatelessWidget {
   final Alert alert;
   const AlertBoxView(
@@ -12,7 +14,7 @@ class AlertBoxView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Image.asset("assets/alert_icons/${alert.hadise.name}.png"),
+      leading: getHadiseImage(alert.hadise, foregroundColor: Colors.white),
       title: Text(
         alert.hadise.baslik,
         style: const MyTextStyles.medium(),

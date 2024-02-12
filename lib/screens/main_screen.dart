@@ -6,6 +6,7 @@ import 'package:meteo_uyari/screens/add_city.dart';
 import 'package:meteo_uyari/screens/alerts_page_view.dart';
 import 'package:meteo_uyari/screens/appbar_popup.dart';
 import 'package:meteo_uyari/screens/debug_info_page.dart';
+import 'package:meteo_uyari/screens/settings.dart';
 import '../classes/messagging.dart';
 import '../classes/supabase.dart';
 import '../models/town.dart';
@@ -95,7 +96,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 builder: (context) => const DebugInfoPage())),
                         icon: const Icon(Icons.developer_mode),
                         tooltip: "Debug",
-                      )
+                      ),
+                    IconButton(
+                        onPressed: () =>
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const Settings(),
+                            )),
+                        icon: const Icon(Icons.settings))
                   ],
                   bottom: TabBar(
                     controller: _tabController,
